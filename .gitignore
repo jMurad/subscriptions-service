@@ -1,0 +1,44 @@
+# Binaries
+main
+
+# Go build files
+*.test
+*.out
+coverage.out
+
+# Dependency directories
+vendor/
+
+# Environment files
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Swagger generated docs
+docs/
+
+# Docker overrides
+docker-compose.override.yml
+
+# Temporary files
+tmp/
+temp/
+
+# Database
+*.db
+
+# Test cache
+.cache/
+
+# Go workspace
+go.work
+go.work.sum
