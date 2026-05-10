@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    container_name: subscriptions-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres:16
+    container_name: subscriptions-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: subscriptions
+    ports:
+      - "5432:5432"
