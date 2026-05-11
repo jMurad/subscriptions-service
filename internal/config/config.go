@@ -3,33 +3,35 @@ package config
 import (
 	"fmt"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	DBUrl   string
 	AppPort string
+	DBUrl   string
 }
 
 func Load() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
+	cfg := &Config{
+		AppPort: getEnv("APP_PORT", "8080"),
+		DBUrl: fmt.Sprintf(
+			"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+			getEnv("DB_USER", "postgres"),
+			getEnv("DB_PASSWORD", "postgres"),
+			getEnv("DB_HOST", "localhost"),
+			getEnv("DB_PORT", "5432"),
+			getEnv("DB_NAME", "subscriptions"),
+			getEnv("DB_SSLMODE", "disable"),
+		),
 	}
 
-	dbUrl := fmt.Sprintf(
-		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_SSLMODE"),
-	)
+	return cfg, nil
+}
 
-	return &Config{
-		DBUrl:   dbUrl,
-		AppPort: os.Getenv("APP_PORT"),
-	}, nil
+func getEnv(key, fallback string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+
+	return value
 }
