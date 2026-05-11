@@ -41,3 +41,35 @@ func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID
 
 	return id, err
 }
+
+func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+	query := `
+	SELECT
+		id,
+		service_name,
+		price,
+		user_id,
+		start_date,
+		end_date,
+		created_at
+	FROM subscriptions
+	WHERE id = $1
+	`
+
+	var sub model.Subscription
+
+	err := r.db.QueryRow(ctx, query, id).Scan(
+		&sub.ID,
+		&sub.ServiceName,
+		&sub.Price,
+		&sub.UserID,
+		&sub.StartDate,
+		&sub.EndDate,
+		&sub.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &sub, nil
+}
