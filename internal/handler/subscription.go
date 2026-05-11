@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	dto "subscriptions-service/internal/dto/subscription"
 	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/service"
 
@@ -21,16 +22,8 @@ func NewSubscriptionHandler(service *service.SubscriptionService) *SubscriptionH
 	}
 }
 
-type CreateSubscriptionRequest struct {
-	ServiceName string `json:"service_name"`
-	Price       int    `json:"price"`
-	UserID      string `json:"user_id"`
-	StartDate   string `json:"start_date"`
-	EndDate     string `json:"end_date,omitempty"`
-}
-
 func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var req CreateSubscriptionRequest
+	var req dto.CreateRequest
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
