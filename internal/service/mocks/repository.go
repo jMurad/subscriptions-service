@@ -18,3 +18,13 @@ func (m *Repository) Create(ctx context.Context, sub model.Subscription) (uuid.U
 
 	return args.Get(0).(uuid.UUID), args.Error(1)
 }
+
+func (m *Repository) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+	args := m.Called(ctx, id)
+
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+
+	return args.Get(0).(*model.Subscription), args.Error(1)
+}
