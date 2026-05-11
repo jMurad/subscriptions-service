@@ -22,3 +22,7 @@ func NewSubscriptionService(repo repository.SubscriptionRepository) *Subscriptio
 func (s *SubscriptionService) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
 	return s.repo.Create(ctx, sub)
 }
+
+func (s *SubscriptionService) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+	return s.repo.GetByID(ctx, id)
+}
