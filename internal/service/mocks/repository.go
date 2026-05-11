@@ -28,3 +28,9 @@ func (m *Repository) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscrip
 
 	return args.Get(0).(*model.Subscription), args.Error(1)
 }
+
+func (m *Repository) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
+	args := m.Called(ctx, limit, offset)
+
+	return args.Get(0).([]model.Subscription), args.Error(1)
+}
