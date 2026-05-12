@@ -9,7 +9,6 @@ import (
 	"subscriptions-service/internal/service"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 )
 
 type SubscriptionHandler struct {
@@ -59,7 +58,7 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	idParam := chi.URLParam(r, "id")
 
-	id, err := uuid.Parse(idParam)
+	id, err := validateUUID(idParam)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
