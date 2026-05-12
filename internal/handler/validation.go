@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func ValidateCreateRequest(req dto.CreateSubscriptionRequest) error {
+func validateCreateRequest(req dto.CreateSubscriptionRequest) error {
 	if strings.TrimSpace(req.ServiceName) == "" {
 		return errors.New("service_name is required")
 	}
