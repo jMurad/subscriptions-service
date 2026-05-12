@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Create tests
 func TestCreate_Success(t *testing.T) {
 	mockRepo := new(mocks.Repository)
 
@@ -70,6 +71,67 @@ func TestCreate_RepositoryError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, uuid.Nil, id)
 	assert.Equal(t, expectedErr, err)
+
+	mockRepo.AssertExpectations(t)
+}
+
+// GetByID tests
+func TestGetByID_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	expected := &model.Subscription{
+		ID:          uuid.New(),
+		ServiceName: "Netflix",
+		Price:       500,
+		UserID:      uuid.New(),
+		StartDate:   time.Now(),
+	}
+
+	mockRepo.
+		On(
+			"GetByID",
+			context.Background(),
+			expected.ID,
+		).
+		Return(expected, nil)
+
+	result, err := svc.GetByID(
+		context.Background(),
+		expected.ID,
+	)
+
+	assert.NoError(t, err)
+	assert.Equal(t, expected, result)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetByID_NotFound(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	id := uuid.New()
+
+	expectedErr := errors.New("not found")
+
+	mockRepo.
+		On(
+			"GetByID",
+			context.Background(),
+			id,
+		).
+		Return(nil, expectedErr)
+
+	result, err := svc.GetByID(
+		context.Background(),
+		id,
+	)
+
+	assert.Error(t, err)
+	assert.Nil(t, result)
 
 	mockRepo.AssertExpectations(t)
 }
