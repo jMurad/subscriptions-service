@@ -2,18 +2,24 @@ package handler_test
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"subscriptions-service/internal/handler"
+	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/service/mocks"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
 
+// Create tests
 func TestCreateSubscription_InvalidJSON(t *testing.T) {
 	mockRepo := new(mocks.Repository)
 
@@ -127,4 +133,118 @@ func TestCreateSubscription_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 	mockRepo.AssertExpectations(t)
+}
+
+// GetByID tests
+func TestGetByID_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	sub := &model.Subscription{
+		ID:          id,
+		ServiceName: "Yandex Plus",
+		Price:       400,
+		UserID:      uuid.New(),
+		StartDate:   time.Now(),
+	}
+
+	mockRepo.
+		On("GetByID", mock.Anything, id).
+		Return(sub, nil)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/"+id.String(),
+		nil,
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.GetByID(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetByID_InvalidID(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/invalid",
+		nil,
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", "invalid")
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.GetByID(w, req)
+
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+}
+
+func TestGetByID_NotFound(t *testing.T) {
+
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	mockRepo.
+		On("GetByID", mock.Anything, id).
+		Return(nil, errors.New("not found"))
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/"+id.String(),
+		nil,
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.GetByID(w, req)
+
+	assert.Equal(t, http.StatusNotFound, w.Code)
 }
