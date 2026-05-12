@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	dto "subscriptions-service/internal/dto/subscription"
@@ -96,4 +97,41 @@ func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(subscription)
+}
+
+func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
+	limit := 10
+	offset := 0
+
+	limitParam := r.URL.Query().Get("limit")
+	offsetParam := r.URL.Query().Get("offset")
+
+	if limitParam != "" {
+		parsedLimit, err := strconv.Atoi(limitParam)
+		if err == nil {
+			limit = parsedLimit
+		}
+	}
+
+	if offsetParam != "" {
+		parsedOffset, err := strconv.Atoi(offsetParam)
+		if err == nil {
+			offset = parsedOffset
+		}
+	}
+
+	subscriptions, err := h.service.List(
+		r.Context(),
+		limit,
+		offset,
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(subscriptions)
 }
