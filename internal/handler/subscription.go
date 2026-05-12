@@ -94,9 +94,22 @@ func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := dto.SubscriptionResponse{
+		ID:          subscription.ID,
+		ServiceName: subscription.ServiceName,
+		Price:       subscription.Price,
+		UserID:      subscription.UserID,
+		StartDate:   subscription.StartDate.Format("01-2006"),
+	}
+
+	if subscription.EndDate != nil {
+		formatted := subscription.EndDate.Format("01-2006")
+		response.EndDate = &formatted
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 
-	json.NewEncoder(w).Encode(subscription)
+	json.NewEncoder(w).Encode(response)
 }
 
 func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
