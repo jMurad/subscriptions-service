@@ -135,3 +135,55 @@ func TestGetByID_NotFound(t *testing.T) {
 
 	mockRepo.AssertExpectations(t)
 }
+
+// List tests
+func TestList_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	expected := []model.Subscription{
+		{
+			ID:          uuid.New(),
+			ServiceName: "Netflix",
+			Price:       500,
+		},
+	}
+
+	mockRepo.
+		On("List", context.Background(), 10, 0).
+		Return(expected, nil)
+
+	result, err := svc.List(
+		context.Background(),
+		10,
+		0,
+	)
+
+	assert.NoError(t, err)
+	assert.Len(t, result, 1)
+	assert.Equal(t, expected, result)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestList_Empty(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	mockRepo.
+		On("List", context.Background(), 10, 0).
+		Return([]model.Subscription{}, nil)
+
+	result, err := svc.List(
+		context.Background(),
+		10,
+		0,
+	)
+
+	assert.NoError(t, err)
+	assert.Empty(t, result)
+
+	mockRepo.AssertExpectations(t)
+}
