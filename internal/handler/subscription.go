@@ -14,10 +14,10 @@ import (
 )
 
 type SubscriptionHandler struct {
-	service *service.SubscriptionService
+	service service.SubscriptionService
 }
 
-func NewSubscriptionHandler(service *service.SubscriptionService) *SubscriptionHandler {
+func NewSubscriptionHandler(service service.SubscriptionService) *SubscriptionHandler {
 	return &SubscriptionHandler{
 		service: service,
 	}
