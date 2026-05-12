@@ -4,10 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 
 	"subscriptions-service/internal/handler/dto"
-	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/service"
 
 	"github.com/go-chi/chi/v5"
@@ -33,49 +31,22 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err := uuid.Parse(req.UserID)
+	subscription, err := toSubscriptionModel(req)
 	if err != nil {
-		http.Error(w, "invalid user_id", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	startDate, err := time.Parse("01-2006", req.StartDate)
-	if err != nil {
-		http.Error(w, "invalid start_date", http.StatusBadRequest)
-		return
-	}
-
-	var endDate *time.Time
-
-	if req.EndDate != "" {
-		parsedEndDate, err := time.Parse("01-2006", req.EndDate)
-		if err != nil {
-			http.Error(w, "invalid end_date", http.StatusBadRequest)
-			return
-		}
-
-		endDate = &parsedEndDate
-	}
-
-	sub := model.Subscription{
-		ServiceName: req.ServiceName,
-		Price:       req.Price,
-		UserID:      userID,
-		StartDate:   startDate,
-		EndDate:     endDate,
-	}
-
-	id, err := h.service.Create(r.Context(), sub)
+	id, err := h.service.Create(r.Context(), subscription)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := dto.CreateSubscriptionResponse{
-		ID: id.String(),
-	}
+	response := ToCreateSubscriptionResponse(id)
 
 	w.Header().Set("Content-Type", "application/json")
+
 	json.NewEncoder(w).Encode(response)
 }
 
