@@ -31,6 +31,12 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = ValidateCreateRequest(req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
 	subscription, err := toSubscriptionModel(req)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
