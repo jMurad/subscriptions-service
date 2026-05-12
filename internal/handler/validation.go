@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"subscriptions-service/internal/handler/dto"
@@ -36,4 +37,37 @@ func validateUUID(id string) (uuid.UUID, error) {
 	}
 
 	return parsedID, nil
+}
+
+func validateListParams(limitParam string, offsetParam string) (int, int, error) {
+	limit := 10
+	offset := 0
+
+	if limitParam != "" {
+		parsedLimit, err := strconv.Atoi(limitParam)
+		if err != nil {
+			return 0, 0, errors.New("invalid limit")
+		}
+
+		if parsedLimit <= 0 {
+			return 0, 0, errors.New("limit must be greater than 0")
+		}
+
+		limit = parsedLimit
+	}
+
+	if offsetParam != "" {
+		parsedOffset, err := strconv.Atoi(offsetParam)
+		if err != nil {
+			return 0, 0, errors.New("invalid offset")
+		}
+
+		if parsedOffset < 0 {
+			return 0, 0, errors.New("offset must be non-negative")
+		}
+
+		offset = parsedOffset
+	}
+
+	return limit, offset, nil
 }
