@@ -54,6 +54,7 @@ func main() {
 	r.Route("/subscriptions", func(r chi.Router) {
 		r.Post("/", h.Create)
 		r.Get("/{id}", h.GetByID)
+		r.Get("/", h.List)
 	})
 
 	// Configure HTTP server
