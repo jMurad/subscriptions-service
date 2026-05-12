@@ -9,7 +9,7 @@ import (
 	"subscriptions-service/internal/handler"
 	"subscriptions-service/internal/logger"
 	"subscriptions-service/internal/repository/postgres"
-	"subscriptions-service/internal/service"
+	"subscriptions-service/internal/service/subscriptions"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -40,7 +40,7 @@ func main() {
 	repo := postgres.NewSubscriptionRepository(db)
 
 	// --- services ---
-	svc := service.NewSubscriptionService(repo)
+	svc := subscriptions.NewSubscriptionService(repo)
 
 	// --- handlers ---
 	h := handler.NewSubscriptionHandler(svc)
