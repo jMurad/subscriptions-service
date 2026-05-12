@@ -3,6 +3,7 @@ package handler_test
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -247,4 +248,65 @@ func TestGetByID_NotFound(t *testing.T) {
 	h.GetByID(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
+}
+
+// List tests
+func TestListSubscriptions_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	subscriptions := []model.Subscription{
+		{
+			ID:          uuid.New(),
+			ServiceName: "Yandex Plus",
+			Price:       400,
+		},
+	}
+
+	mockRepo.
+		On("List", mock.Anything, 10, 0).
+		Return(subscriptions, nil)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.List(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	var response []model.Subscription
+
+	err := json.NewDecoder(w.Body).Decode(&response)
+
+	assert.NoError(t, err)
+	assert.Len(t, response, 1)
+}
+
+func TestListSubscriptions_Pagination(t *testing.T) {
+
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	mockRepo.
+		On("List", mock.Anything, 5, 10).
+		Return([]model.Subscription{}, nil)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions?limit=5&offset=10",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.List(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }
