@@ -49,7 +49,7 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := ToCreateSubscriptionResponse(id)
+	response := toCreateSubscriptionResponse(id)
 
 	w.Header().Set("Content-Type", "application/json")
 
