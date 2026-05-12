@@ -93,7 +93,7 @@ func toSubscriptionResponseList(subscriptions []model.Subscription) []dto.Subscr
 }
 
 // Id to response DTO
-func ToCreateSubscriptionResponse(id uuid.UUID) dto.CreateSubscriptionResponse {
+func toCreateSubscriptionResponse(id uuid.UUID) dto.CreateSubscriptionResponse {
 	return dto.CreateSubscriptionResponse{
 		ID: id.String(),
 	}
