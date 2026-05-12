@@ -25,7 +25,7 @@ func NewSubscriptionHandler(service service.SubscriptionService) *SubscriptionHa
 }
 
 func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var req dto.CreateRequest
+	var req dto.CreateSubscriptionRequest
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -71,8 +71,8 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := map[string]string{
-		"id": id.String(),
+	response := dto.CreateSubscriptionResponse{
+		ID: id.String(),
 	}
 
 	w.Header().Set("Content-Type", "application/json")
