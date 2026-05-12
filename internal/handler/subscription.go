@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"subscriptions-service/internal/handler/dto"
 	"subscriptions-service/internal/service"
@@ -89,56 +88,22 @@ func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
-	limit := 10
-	offset := 0
-
 	limitParam := r.URL.Query().Get("limit")
 	offsetParam := r.URL.Query().Get("offset")
 
-	if limitParam != "" {
-		parsedLimit, err := strconv.Atoi(limitParam)
-		if err == nil {
-			limit = parsedLimit
-		}
-	}
-
-	if offsetParam != "" {
-		parsedOffset, err := strconv.Atoi(offsetParam)
-		if err == nil {
-			offset = parsedOffset
-		}
-	}
-
-	subscriptions, err := h.service.List(
-		r.Context(),
-		limit,
-		offset,
-	)
+	limit, offset, err := validateListParams(limitParam, offsetParam)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	response := make([]dto.SubscriptionResponse, 0, len(subscriptions))
-
-	for _, subscription := range subscriptions {
-
-		item := dto.SubscriptionResponse{
-			ID:          subscription.ID,
-			ServiceName: subscription.ServiceName,
-			Price:       subscription.Price,
-			UserID:      subscription.UserID,
-			StartDate:   subscription.StartDate.Format("01-2006"),
-		}
-
-		if subscription.EndDate != nil {
-			formatted := subscription.EndDate.Format("01-2006")
-			item.EndDate = &formatted
-		}
-
-		response = append(response, item)
+	subscriptions, err := h.service.List(r.Context(), limit, offset)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	response := toSubscriptionResponseList(subscriptions)
 
 	w.Header().Set("Content-Type", "application/json")
 
