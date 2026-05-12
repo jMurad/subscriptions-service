@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	dto "subscriptions-service/internal/dto/subscription"
+	"subscriptions-service/internal/handler/dto"
 	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/service"
 
