@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"subscriptions-service/internal/handler/dto"
+
+	"github.com/google/uuid"
 )
 
 func ValidateCreateRequest(req dto.CreateSubscriptionRequest) error {
@@ -25,4 +27,13 @@ func ValidateCreateRequest(req dto.CreateSubscriptionRequest) error {
 	}
 
 	return nil
+}
+
+func validateUUID(id string) (uuid.UUID, error) {
+	parsedID, err := uuid.Parse(id)
+	if err != nil {
+		return uuid.Nil, errors.New("invalid uuid")
+	}
+
+	return parsedID, nil
 }
