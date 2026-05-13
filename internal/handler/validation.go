@@ -71,3 +71,11 @@ func validateListParams(limitParam string, offsetParam string) (int, int, error)
 
 	return limit, offset, nil
 }
+
+func validateUpdateSubscriptionRequest(req dto.UpdateSubscriptionRequest) error {
+	if req.Price != nil && *req.Price <= 0 {
+		return errors.New("price must be greater than 0")
+	}
+
+	return nil
+}
