@@ -247,3 +247,49 @@ func TestUpdate_RepositoryError(t *testing.T) {
 
 	mockRepo.AssertExpectations(t)
 }
+
+// Delete tests
+func TestDelete_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	id := uuid.New()
+
+	mockRepo.
+		On("Delete", context.Background(), id).
+		Return(nil)
+
+	err := svc.Delete(
+		context.Background(),
+		id,
+	)
+
+	assert.NoError(t, err)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestDelete_RepositoryError(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	id := uuid.New()
+
+	expectedErr := errors.New("delete failed")
+
+	mockRepo.
+		On("Delete", context.Background(), id).
+		Return(expectedErr)
+
+	err := svc.Delete(
+		context.Background(),
+		id,
+	)
+
+	assert.Error(t, err)
+	assert.Equal(t, expectedErr, err)
+
+	mockRepo.AssertExpectations(t)
+}
