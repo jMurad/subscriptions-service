@@ -214,7 +214,6 @@ func TestGetByID_InvalidID(t *testing.T) {
 }
 
 func TestGetByID_NotFound(t *testing.T) {
-
 	mockRepo := new(mocks.Repository)
 
 	h := handler.NewSubscriptionHandler(mockRepo)
@@ -289,7 +288,6 @@ func TestListSubscriptions_Success(t *testing.T) {
 }
 
 func TestListSubscriptions_Pagination(t *testing.T) {
-
 	mockRepo := new(mocks.Repository)
 
 	h := handler.NewSubscriptionHandler(mockRepo)
@@ -400,4 +398,134 @@ func TestUpdateSubscription_InvalidID(t *testing.T) {
 		http.StatusBadRequest,
 		w.Code,
 	)
+}
+
+func TestUpdateSubscription_InvalidJSON(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	req := httptest.NewRequest(
+		http.MethodPatch,
+		"/subscriptions/"+id.String(),
+		bytes.NewBufferString("invalid-json"),
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Update(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
+
+func TestUpdateSubscription_InvalidPrice(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	body := `{
+		"price": 0
+	}`
+
+	req := httptest.NewRequest(
+		http.MethodPatch,
+		"/subscriptions/"+id.String(),
+		bytes.NewBufferString(body),
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Update(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
+
+func TestUpdateSubscription_ServiceError(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	price := 400
+
+	update := model.SubscriptionUpdate{
+		Price: &price,
+	}
+
+	expectedErr := errors.New("service error")
+
+	mockRepo.
+		On("Update", mock.Anything, id, update).
+		Return(expectedErr)
+
+	body := `{
+		"price": 400
+	}`
+
+	req := httptest.NewRequest(
+		http.MethodPatch,
+		"/subscriptions/"+id.String(),
+		bytes.NewBufferString(body),
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Update(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusInternalServerError,
+		w.Code,
+	)
+
+	mockRepo.AssertExpectations(t)
 }
