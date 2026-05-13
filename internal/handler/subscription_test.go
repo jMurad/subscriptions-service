@@ -310,3 +310,94 @@ func TestListSubscriptions_Pagination(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 }
+
+// Update tests
+func TestUpdateSubscription_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	price := 400
+
+	update := model.SubscriptionUpdate{
+		Price: &price,
+	}
+
+	mockRepo.
+		On("Update", mock.Anything, id, update).
+		Return(nil)
+
+	body := `{
+		"price": 400
+	}`
+
+	req := httptest.NewRequest(
+		http.MethodPatch,
+		"/subscriptions/"+id.String(),
+		bytes.NewBufferString(body),
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Update(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusNoContent,
+		w.Code,
+	)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestUpdateSubscription_InvalidID(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	body := `{
+		"price": 400
+	}`
+
+	req := httptest.NewRequest(
+		http.MethodPatch,
+		"/subscriptions/invalid",
+		bytes.NewBufferString(body),
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", "invalid")
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Update(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
