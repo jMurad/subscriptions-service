@@ -15,3 +15,9 @@ type Subscription struct {
 	EndDate     *time.Time
 	CreatedAt   time.Time
 }
+
+type SubscriptionUpdate struct {
+	ServiceName *string
+	Price       *int
+	EndDate     *time.Time
+}
