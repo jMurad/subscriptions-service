@@ -30,3 +30,7 @@ func (s *SubService) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscrip
 func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
 	return s.repo.List(ctx, limit, offset)
 }
+
+func (s *SubService) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
+	return s.repo.Update(ctx, id, update)
+}
