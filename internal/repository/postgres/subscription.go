@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 
 	"subscriptions-service/internal/model"
 
@@ -145,4 +146,26 @@ func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.Subscri
 	)
 
 	return err
+}
+
+func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
+	query := `
+	DELETE FROM subscriptions
+	WHERE id = $1
+	`
+
+	result, err := r.db.Exec(
+		ctx,
+		query,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	if result.RowsAffected() == 0 {
+		return errors.New("subscription not found")
+	}
+
+	return nil
 }
