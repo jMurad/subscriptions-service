@@ -12,4 +12,5 @@ type SubscriptionService interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error)
 	List(ctx context.Context, limit, offset int) ([]model.Subscription, error)
 	Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error
+	Delete(ctx context.Context, id uuid.UUID) error
 }
