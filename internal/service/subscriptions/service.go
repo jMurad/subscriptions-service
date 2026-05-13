@@ -34,3 +34,7 @@ func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subsc
 func (s *SubService) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
 	return s.repo.Update(ctx, id, update)
 }
+
+func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
+	return s.repo.Delete(ctx, id)
+}
