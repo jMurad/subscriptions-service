@@ -187,3 +187,63 @@ func TestList_Empty(t *testing.T) {
 
 	mockRepo.AssertExpectations(t)
 }
+
+// Update tests
+func TestUpdate_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	id := uuid.New()
+
+	price := 400
+
+	update := model.SubscriptionUpdate{
+		Price: &price,
+	}
+
+	mockRepo.
+		On("Update", context.Background(), id, update).
+		Return(nil)
+
+	err := svc.Update(
+		context.Background(),
+		id,
+		update,
+	)
+
+	assert.NoError(t, err)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestUpdate_RepositoryError(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	id := uuid.New()
+
+	price := 400
+
+	update := model.SubscriptionUpdate{
+		Price: &price,
+	}
+
+	expectedErr := errors.New("db error")
+
+	mockRepo.
+		On("Update", context.Background(), id, update).
+		Return(expectedErr)
+
+	err := svc.Update(
+		context.Background(),
+		id,
+		update,
+	)
+
+	assert.Error(t, err)
+	assert.Equal(t, expectedErr, err)
+
+	mockRepo.AssertExpectations(t)
+}
