@@ -529,3 +529,120 @@ func TestUpdateSubscription_ServiceError(t *testing.T) {
 
 	mockRepo.AssertExpectations(t)
 }
+
+// Delete tests
+func TestDeleteSubscription_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	mockRepo.
+		On("Delete", mock.Anything, id).
+		Return(nil)
+
+	req := httptest.NewRequest(
+		http.MethodDelete,
+		"/subscriptions/"+id.String(),
+		nil,
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Delete(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusNoContent,
+		w.Code,
+	)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestDeleteSubscription_InvalidID(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	req := httptest.NewRequest(
+		http.MethodDelete,
+		"/subscriptions/invalid",
+		nil,
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", "invalid")
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Delete(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
+
+func TestDeleteSubscription_ServiceError(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	id := uuid.New()
+
+	mockRepo.
+		On("Delete", mock.Anything, id).
+		Return(errors.New("delete failed"))
+
+	req := httptest.NewRequest(
+		http.MethodDelete,
+		"/subscriptions/"+id.String(),
+		nil,
+	)
+
+	rctx := chi.NewRouteContext()
+
+	rctx.URLParams.Add("id", id.String())
+
+	req = req.WithContext(
+		context.WithValue(
+			req.Context(),
+			chi.RouteCtxKey,
+			rctx,
+		),
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Delete(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusInternalServerError,
+		w.Code,
+	)
+}
