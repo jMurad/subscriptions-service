@@ -55,6 +55,7 @@ func main() {
 		r.Post("/", h.Create)
 		r.Get("/{id}", h.GetByID)
 		r.Get("/", h.List)
+		r.Patch("/{id}", h.Update)
 	})
 
 	// Configure HTTP server
