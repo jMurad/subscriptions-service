@@ -98,3 +98,23 @@ func toCreateSubscriptionResponse(id uuid.UUID) dto.CreateSubscriptionResponse {
 		ID: id.String(),
 	}
 }
+
+// Request update DTO to domain update model
+func toSubscriptionUpdateModel(req dto.UpdateSubscriptionRequest) (model.SubscriptionUpdate, error) {
+	update := model.SubscriptionUpdate{
+		ServiceName: req.ServiceName,
+		Price:       req.Price,
+	}
+
+	if req.EndDate != nil {
+
+		parsedEndDate, err := time.Parse(subscriptionDateLayout, *req.EndDate)
+		if err != nil {
+			return model.SubscriptionUpdate{}, errors.New("error invalid EndDate")
+		}
+
+		update.EndDate = &parsedEndDate
+	}
+
+	return update, nil
+}
