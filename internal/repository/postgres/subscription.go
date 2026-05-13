@@ -124,3 +124,25 @@ func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscrip
 
 	return subscriptions, nil
 }
+
+func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
+	query := `
+	UPDATE subscriptions
+	SET
+		service_name = COALESCE($1, service_name),
+		price = COALESCE($2, price),
+		end_date = COALESCE($3, end_date)
+	WHERE id = $4
+	`
+
+	_, err := r.db.Exec(
+		ctx,
+		query,
+		update.ServiceName,
+		update.Price,
+		update.EndDate,
+		id,
+	)
+
+	return err
+}
