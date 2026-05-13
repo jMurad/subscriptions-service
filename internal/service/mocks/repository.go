@@ -34,3 +34,9 @@ func (m *Repository) List(ctx context.Context, limit, offset int) ([]model.Subsc
 
 	return args.Get(0).([]model.Subscription), args.Error(1)
 }
+
+func (m *Repository) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
+	args := m.Called(ctx, id, update)
+
+	return args.Error(0)
+}
