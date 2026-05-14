@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"subscriptions-service/internal/handler"
+	"subscriptions-service/internal/handler/dto"
 	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/service/mocks"
 
@@ -639,6 +640,137 @@ func TestDeleteSubscription_ServiceError(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	h.Delete(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusInternalServerError,
+		w.Code,
+	)
+}
+
+// Total tests
+func TestTotal_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	mockRepo.
+		On("Total", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+		Return(1500, nil)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/total?from=01-2025&to=12-2025",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Total(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusOK,
+		w.Code,
+	)
+
+	var response dto.TotalResponse
+
+	err := json.NewDecoder(w.Body).Decode(
+		&response,
+	)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, 1500, response.Total)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestTotal_MissingParams(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/total",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Total(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
+
+func TestTotal_InvalidFromDate(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/total?from=invalid&to=12-2025",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Total(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
+
+func TestTotal_InvalidUserID(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/total?from=01-2025&to=12-2025&user_id=invalid",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Total(w, req)
+
+	assert.Equal(
+		t,
+		http.StatusBadRequest,
+		w.Code,
+	)
+}
+
+func TestTotal_ServiceError(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	h := handler.NewSubscriptionHandler(mockRepo)
+
+	mockRepo.
+		On("Total", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
+		Return(0, errors.New("service error"))
+
+	req := httptest.NewRequest(
+		http.MethodGet,
+		"/subscriptions/total?from=01-2025&to=12-2025",
+		nil,
+	)
+
+	w := httptest.NewRecorder()
+
+	h.Total(w, req)
 
 	assert.Equal(
 		t,
