@@ -22,6 +22,17 @@ func NewSubscriptionHandler(service service.SubscriptionService) *SubscriptionHa
 	}
 }
 
+// Create godoc
+// @Summary Создать подписку
+// @Description Создание новой подписки пользователя
+// @Tags subscriptions
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateSubscriptionRequest true "Subscription payload"
+// @Success 200 {object} dto.CreateSubscriptionResponse
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /subscriptions/ [post]
 func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 
@@ -69,6 +80,16 @@ func (h *SubscriptionHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Info("subscription created successfully", zap.String("subscription_id", id.String()))
 }
 
+// GetByID godoc
+// @Summary Получить подписку по ID
+// @Description Возвращает подписку по UUID
+// @Tags subscriptions
+// @Produce json
+// @Param id path string true "Subscription ID"
+// @Success 200 {object} dto.SubscriptionResponse
+// @Failure 400 {string} string
+// @Failure 404 {string} string
+// @Router /subscriptions/{id} [get]
 func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 
@@ -100,6 +121,17 @@ func (h *SubscriptionHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	log.Info("subscription returned successfully", zap.String("subscription_id", id.String()))
 }
 
+// List godoc
+// @Summary Получить список подписок
+// @Description Возвращает список подписок с пагинацией
+// @Tags subscriptions
+// @Produce json
+// @Param limit query int false "Limit"
+// @Param offset query int false "Offset"
+// @Success 200 {array} dto.SubscriptionResponse
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /subscriptions/ [get]
 func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 
@@ -140,6 +172,17 @@ func (h *SubscriptionHandler) List(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
+// Update godoc
+// @Summary Обновить подписку
+// @Description Частичное обновление подписки
+// @Tags subscriptions
+// @Accept json
+// @Param id path string true "Subscription ID"
+// @Param request body dto.UpdateSubscriptionRequest true "Update payload"
+// @Success 204
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /subscriptions/{id} [patch]
 func (h *SubscriptionHandler) Update(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 
@@ -190,6 +233,15 @@ func (h *SubscriptionHandler) Update(w http.ResponseWriter, r *http.Request) {
 	log.Info("subscription updated successfully", zap.String("subscription_id", id.String()))
 }
 
+// Delete godoc
+// @Summary Удалить подписку
+// @Description Удаляет подписку по UUID
+// @Tags subscriptions
+// @Param id path string true "Subscription ID"
+// @Success 204
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /subscriptions/{id} [delete]
 func (h *SubscriptionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 
@@ -219,6 +271,19 @@ func (h *SubscriptionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
+// Total godoc
+// @Summary Получить суммарную стоимость подписок
+// @Description Считает общую стоимость подписок за период
+// @Tags subscriptions
+// @Produce json
+// @Param from query string true "From month"
+// @Param to query string true "To month"
+// @Param user_id query string false "User ID"
+// @Param service_name query string false "Service name"
+// @Success 200 {object} dto.TotalResponse
+// @Failure 400 {string} string
+// @Failure 500 {string} string
+// @Router /subscriptions/total [get]
 func (h *SubscriptionHandler) Total(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 

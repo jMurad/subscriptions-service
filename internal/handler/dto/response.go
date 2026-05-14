@@ -2,6 +2,8 @@ package dto
 
 import "github.com/google/uuid"
 
+// SubscriptionResponse swagger model
+// @Description Ответ на запрос подписки
 type SubscriptionResponse struct {
 	ID          uuid.UUID `json:"id"`
 	ServiceName string    `json:"service_name"`

@@ -39,3 +39,6 @@ logs:
 
 clean:
 	rm -rf bin
+
+swagger:
+	swag init -g cmd/app/main.go

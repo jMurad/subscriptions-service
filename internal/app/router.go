@@ -4,6 +4,7 @@ import (
 	"subscriptions-service/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 )
 
@@ -13,6 +14,8 @@ func newRouter(logg *zap.Logger, deps *Dependencies) *chi.Mux {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger(logg))
 	r.Use(middleware.Recovery(logg))
+
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	r.Route("/subscriptions", func(r chi.Router) {
 		r.Post("/", deps.SubscriptionHandler.Create)
