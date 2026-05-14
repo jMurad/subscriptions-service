@@ -79,3 +79,15 @@ func validateUpdateSubscriptionRequest(req dto.UpdateSubscriptionRequest) error 
 
 	return nil
 }
+
+func validateTotalRequest(req dto.TotalRequest) error {
+	if strings.TrimSpace(req.From) == "" {
+		return errors.New("from is required")
+	}
+
+	if strings.TrimSpace(req.To) == "" {
+		return errors.New("to is required")
+	}
+
+	return nil
+}
