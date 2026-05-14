@@ -10,6 +10,7 @@ import (
 
 	"subscriptions-service/internal/config"
 	"subscriptions-service/internal/handler"
+	"subscriptions-service/internal/middleware"
 	"subscriptions-service/internal/repository/postgres"
 	"subscriptions-service/internal/service/subscriptions"
 
@@ -50,6 +51,10 @@ func main() {
 
 	// --- router ---
 	r := chi.NewRouter()
+
+	r.Use(middleware.RequestID)
+	r.Use(middleware.Logger(logg))
+	r.Use(middleware.Recovery(logg))
 
 	r.Route("/subscriptions", func(r chi.Router) {
 		r.Post("/", h.Create)
