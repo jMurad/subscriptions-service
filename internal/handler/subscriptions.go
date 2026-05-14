@@ -216,3 +216,64 @@ func (h *SubscriptionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("subscription deleted successfully", zap.String("subscription_id", id.String()))
 }
+
+func (h *SubscriptionHandler) Total(w http.ResponseWriter, r *http.Request) {
+	log := logger.FromContext(r.Context())
+
+	req := dto.TotalRequest{
+		From:   r.URL.Query().Get("from"),
+		To:     r.URL.Query().Get("to"),
+		UserID: r.URL.Query().Get("user_id"),
+		ServiceName: r.URL.Query().Get(
+			"service_name",
+		),
+	}
+
+	err := validateTotalRequest(req)
+	if err != nil {
+
+		log.Warn("total request validation failed",
+			zap.Error(err),
+		)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	filters, err := toTotalFilters(req)
+	if err != nil {
+
+		log.Warn("failed to map total request",
+			zap.Error(err),
+		)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	total, err := h.service.Total(
+		r.Context(),
+		filters.UserID,
+		filters.ServiceName,
+		filters.From,
+		filters.To,
+	)
+	if err != nil {
+
+		log.Error("failed to calculate total",
+			zap.Error(err),
+		)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+
+		return
+	}
+
+	response := toTotalResponse(total)
+
+	w.Header().Set(
+		"Content-Type",
+		"application/json",
+	)
+
+	json.NewEncoder(w).Encode(response)
+}
