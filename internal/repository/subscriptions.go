@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"subscriptions-service/internal/model"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -13,4 +14,5 @@ type SubscriptionRepository interface {
 	List(ctx context.Context, limit, offset int) ([]model.Subscription, error)
 	Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error
 	Delete(ctx context.Context, id uuid.UUID) error
+	Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error)
 }
