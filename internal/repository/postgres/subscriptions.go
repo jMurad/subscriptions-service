@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"strconv"
 	"time"
 
 	"subscriptions-service/internal/logger"
@@ -235,4 +236,44 @@ func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	)
 
 	return nil
+}
+
+func (r *SubRepo) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
+	query := `
+	SELECT COALESCE(SUM(price), 0)
+	FROM subscriptions
+	WHERE start_date >= $1
+	AND start_date <= $2
+	`
+
+	args := []interface{}{
+		from,
+		to,
+	}
+
+	argPos := 3
+
+	if userID != nil {
+		query += ` AND user_id = $` + strconv.Itoa(argPos)
+		args = append(args, *userID)
+		argPos++
+	}
+
+	if serviceName != nil {
+		query += ` AND service_name = $` + strconv.Itoa(argPos)
+		args = append(args, *serviceName)
+	}
+
+	var total int
+
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		args...,
+	).Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }
