@@ -293,3 +293,64 @@ func TestDelete_RepositoryError(t *testing.T) {
 
 	mockRepo.AssertExpectations(t)
 }
+
+// Total tests
+func TestTotal_Success(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	from := time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	to := time.Date(2025, time.December, 1, 0, 0, 0, 0, time.UTC)
+
+	mockRepo.
+		On("Total", context.Background(), (*uuid.UUID)(nil), (*string)(nil), from, to).
+		Return(2000, nil)
+
+	total, err := svc.Total(
+		context.Background(),
+		nil,
+		nil,
+		from,
+		to,
+	)
+
+	assert.NoError(t, err)
+
+	assert.Equal(t, 2000, total)
+
+	mockRepo.AssertExpectations(t)
+}
+
+func TestTotal_RepositoryError(t *testing.T) {
+	mockRepo := new(mocks.Repository)
+
+	svc := subscriptions.NewSubscriptionService(mockRepo)
+
+	from := time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	to := time.Date(2025, time.December, 1, 0, 0, 0, 0, time.UTC)
+
+	expectedErr := errors.New("repository error")
+
+	mockRepo.
+		On("Total", context.Background(), (*uuid.UUID)(nil), (*string)(nil), from, to).
+		Return(0, expectedErr)
+
+	total, err := svc.Total(
+		context.Background(),
+		nil,
+		nil,
+		from,
+		to,
+	)
+
+	assert.Error(t, err)
+
+	assert.Equal(t, 0, total)
+
+	assert.Equal(t, expectedErr, err)
+
+	mockRepo.AssertExpectations(t)
+}
