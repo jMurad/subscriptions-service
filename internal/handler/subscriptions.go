@@ -258,8 +258,8 @@ func (h *SubscriptionHandler) Total(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error("failed to calculate total",
 			zap.Error(err),
-			zap.String("user_id", filters.UserID.String()),
-			zap.String("service_name", *filters.ServiceName),
+			zap.Any("user_id", filters.UserID),
+			zap.Any("service_name", filters.ServiceName),
 			zap.Time("from", filters.From),
 			zap.Time("to", filters.To),
 		)
@@ -282,8 +282,8 @@ func (h *SubscriptionHandler) Total(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Info("total subscriptions request completed successfully",
-		zap.String("user_id", filters.UserID.String()),
-		zap.String("service_name", *filters.ServiceName),
+		zap.Any("user_id", filters.UserID),
+		zap.Any("service_name", filters.ServiceName),
 		zap.Time("from", filters.From),
 		zap.Time("to", filters.To),
 		zap.Int("total", total),
