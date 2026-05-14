@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"time"
 
 	"subscriptions-service/internal/model"
 
@@ -45,4 +46,10 @@ func (m *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 	args := m.Called(ctx, id)
 
 	return args.Error(0)
+}
+
+func (m *Repository) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
+	args := m.Called(ctx, userID, serviceName, from, to)
+
+	return args.Int(0), args.Error(1)
 }
