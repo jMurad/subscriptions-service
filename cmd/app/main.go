@@ -60,6 +60,7 @@ func main() {
 		r.Post("/", h.Create)
 		r.Get("/{id}", h.GetByID)
 		r.Get("/", h.List)
+		r.Get("/total", h.Total)
 		r.Patch("/{id}", h.Update)
 		r.Delete("/{id}", h.Delete)
 	})
