@@ -136,3 +136,7 @@ func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
 
 	return nil
 }
+
+func (s *SubService) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
+	return s.repo.Total(ctx, userID, serviceName, from, to)
+}
