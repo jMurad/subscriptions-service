@@ -118,3 +118,55 @@ func toSubscriptionUpdateModel(req dto.UpdateSubscriptionRequest) (model.Subscri
 
 	return update, nil
 }
+
+// Domain filters
+type TotalFilters struct {
+	UserID      *uuid.UUID
+	ServiceName *string
+	From        time.Time
+	To          time.Time
+}
+
+// Total request DTO to domain filters
+func toTotalFilters(req dto.TotalRequest) (TotalFilters, error) {
+	from, err := time.Parse(subscriptionDateLayout, req.From)
+	if err != nil {
+		return TotalFilters{}, errors.New("invalid from date")
+	}
+
+	to, err := time.Parse(subscriptionDateLayout, req.To)
+	if err != nil {
+		return TotalFilters{}, errors.New("invalid to date")
+	}
+
+	var userID *uuid.UUID
+
+	if req.UserID != "" {
+		parsedUserID, err := uuid.Parse(req.UserID)
+		if err != nil {
+			return TotalFilters{}, errors.New("invalid user_id")
+		}
+
+		userID = &parsedUserID
+	}
+
+	var serviceName *string
+
+	if req.ServiceName != "" {
+		serviceName = &req.ServiceName
+	}
+
+	return TotalFilters{
+		UserID:      userID,
+		ServiceName: serviceName,
+		From:        from,
+		To:          to,
+	}, nil
+}
+
+// Total value to response DTO
+func toTotalResponse(total int) dto.TotalResponse {
+	return dto.TotalResponse{
+		Total: total,
+	}
+}
