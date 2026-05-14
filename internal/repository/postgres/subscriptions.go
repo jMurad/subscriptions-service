@@ -3,11 +3,14 @@ package postgres
 import (
 	"context"
 	"errors"
+	"time"
 
+	"subscriptions-service/internal/logger"
 	"subscriptions-service/internal/model"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/zap"
 )
 
 type SubRepo struct {
@@ -21,6 +24,9 @@ func NewSubscriptionRepository(db *pgxpool.Pool) *SubRepo {
 }
 
 func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
+	log := logger.FromContext(ctx)
+	start := time.Now()
+
 	query := `
 	INSERT INTO subscriptions
 	(service_name, price, user_id, start_date, end_date)
@@ -39,11 +45,23 @@ func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID
 		sub.StartDate,
 		sub.EndDate,
 	).Scan(&id)
+	if err != nil {
+		log.Error("repository create subscription query failed", zap.Error(err))
+		return uuid.Nil, err
+	}
 
-	return id, err
+	log.Info("repository create subscription query completed",
+		zap.String("subscription_id", id.String()),
+		zap.Duration("duration", time.Since(start)),
+	)
+
+	return id, nil
 }
 
 func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+	log := logger.FromContext(ctx)
+	start := time.Now()
+
 	query := `
 	SELECT
 		id,
@@ -69,13 +87,25 @@ func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscriptio
 		&sub.CreatedAt,
 	)
 	if err != nil {
+		log.Error("repository get subscription query failed",
+			zap.String("subscription_id", id.String()),
+			zap.Error(err),
+		)
 		return nil, err
 	}
+
+	log.Info("repository get subscription query completed",
+		zap.String("subscription_id", id.String()),
+		zap.Duration("duration", time.Since(start)),
+	)
 
 	return &sub, nil
 }
 
 func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
+	log := logger.FromContext(ctx)
+	start := time.Now()
+
 	query := `
 	SELECT
 		id,
@@ -97,6 +127,7 @@ func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscrip
 		offset,
 	)
 	if err != nil {
+		log.Error("repository list subscriptions query failed", zap.Error(err))
 		return nil, err
 	}
 	defer rows.Close()
@@ -104,7 +135,6 @@ func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscrip
 	var subscriptions []model.Subscription
 
 	for rows.Next() {
-
 		var sub model.Subscription
 
 		err = rows.Scan(
@@ -117,16 +147,25 @@ func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscrip
 			&sub.CreatedAt,
 		)
 		if err != nil {
+			log.Error("repository list subscriptions scan failed", zap.Error(err))
 			return nil, err
 		}
 
 		subscriptions = append(subscriptions, sub)
 	}
 
+	log.Info("repository list subscriptions query completed",
+		zap.Int("count", len(subscriptions)),
+		zap.Duration("duration", time.Since(start)),
+	)
+
 	return subscriptions, nil
 }
 
 func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
+	log := logger.FromContext(ctx)
+	start := time.Now()
+
 	query := `
 	UPDATE subscriptions
 	SET
@@ -144,11 +183,26 @@ func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.Subscri
 		update.EndDate,
 		id,
 	)
+	if err != nil {
+		log.Error("repository update subscription query failed",
+			zap.String("subscription_id", id.String()),
+			zap.Error(err),
+		)
+		return err
+	}
 
-	return err
+	log.Info("repository update subscription query completed",
+		zap.String("subscription_id", id.String()),
+		zap.Duration("duration", time.Since(start)),
+	)
+
+	return nil
 }
 
 func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
+	log := logger.FromContext(ctx)
+	start := time.Now()
+
 	query := `
 	DELETE FROM subscriptions
 	WHERE id = $1
@@ -160,12 +214,25 @@ func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
 		id,
 	)
 	if err != nil {
+		log.Error("repository delete subscription query failed",
+			zap.String("subscription_id", id.String()),
+			zap.Error(err),
+		)
 		return err
 	}
 
 	if result.RowsAffected() == 0 {
-		return errors.New("subscription not found")
+		err = errors.New("subscription not found")
+		log.Warn("repository delete subscription affected zero rows",
+			zap.String("subscription_id", id.String()),
+		)
+		return err
 	}
+
+	log.Info("repository delete subscription query completed",
+		zap.String("subscription_id", id.String()),
+		zap.Duration("duration", time.Since(start)),
+	)
 
 	return nil
 }
