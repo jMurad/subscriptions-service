@@ -118,7 +118,9 @@ func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
 	log := logger.FromContext(ctx)
 	start := time.Now()
 
-	log.Info("service delete subscription started", zap.String("subscription_id", id.String()))
+	log.Info("service delete subscription started",
+		zap.String("subscription_id", id.String()),
+	)
 
 	err := s.repo.Delete(ctx, id)
 	if err != nil {
@@ -138,5 +140,25 @@ func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (s *SubService) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
-	return s.repo.Total(ctx, userID, serviceName, from, to)
+	log := logger.FromContext(ctx)
+	start := time.Now()
+
+	log.Info("calculating subscriptions total")
+
+	total, err := s.repo.Total(ctx, userID, serviceName, from, to)
+	if err != nil {
+		log.Error("failed to calculate subscriptions total",
+			zap.Error(err),
+			zap.Duration("duration", time.Since(start)),
+		)
+
+		return 0, err
+	}
+
+	log.Info("subscriptions total calculated",
+		zap.Int("total", total),
+		zap.Duration("duration", time.Since(start)),
+	)
+
+	return total, nil
 }
