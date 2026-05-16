@@ -20,10 +20,10 @@ const (
 )
 
 type SubService struct {
-	repo SubscriptionRepository
+	repo Repository
 }
 
-func NewSubscriptionService(repo SubscriptionRepository) *SubService {
+func NewSubscriptionService(repo Repository) *SubService {
 	return &SubService{
 		repo: repo,
 	}

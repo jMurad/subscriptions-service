@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type SubscriptionRepository interface {
+type Repository interface {
 	Create(context.Context, model.Subscription) (uuid.UUID, error)
 	GetByID(context.Context, uuid.UUID) (*model.Subscription, error)
 	GetByUserID(context.Context, uuid.UUID, int, int) ([]model.Subscription, error)
