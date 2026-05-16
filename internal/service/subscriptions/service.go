@@ -2,8 +2,10 @@ package subscriptions
 
 import (
 	"context"
+"strings"
 	"time"
 
+apperrors "subscriptions-service/internal/errors"
 	"subscriptions-service/internal/logger"
 	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/repository"
@@ -103,26 +105,26 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 }
 
 func (s *SubService) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+ctx, cancel := context.WithTimeout(ctx, shortTimeout)
+	defer cancel()
+
 	log := logger.FromContext(ctx)
-	start := time.Now()
-
-	log.Info("service get subscription started", zap.String("subscription_id", id.String()))
-
-	subscription, err := s.repo.GetByID(ctx, id)
+	
+	sub, err := s.repo.GetByID(ctx, id)
 	if err != nil {
-		log.Error("service get subscription failed",
+		log.Error("failed to get subscription",
 			zap.String("subscription_id", id.String()),
 			zap.Error(err),
 		)
+
 		return nil, err
 	}
-
-	log.Info("service get subscription completed",
+	log.Info("subscription created",
 		zap.String("subscription_id", id.String()),
-		zap.Duration("duration", time.Since(start)),
+		zap.String("user_id", sub.UserID.String()),
 	)
 
-	return subscription, nil
+	return sub, nil
 }
 
 func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
