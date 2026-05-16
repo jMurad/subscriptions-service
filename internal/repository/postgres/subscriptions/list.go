@@ -6,7 +6,7 @@ import (
 	"subscriptions-service/internal/model"
 )
 
-func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
+func (r *Repository) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
 	query := `
     SELECT
         id,

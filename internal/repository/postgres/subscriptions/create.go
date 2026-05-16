@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
+func (r *Repository) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
 	query := `
 	INSERT INTO subscriptions
 	(service_name, price, user_id, start_date, end_date)

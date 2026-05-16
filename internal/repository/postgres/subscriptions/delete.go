@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `
     UPDATE subscriptions
     SET deleted_at = NOW(),

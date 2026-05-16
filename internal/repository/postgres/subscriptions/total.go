@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *SubRepo) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
+func (r *Repository) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
 	conditions := make([]string, 0)
 	args := make([]any, 0)
 

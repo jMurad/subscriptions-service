@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
+func (r *Repository) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
 	conditions := make([]string, 0)
 	args := make([]any, 0)
 

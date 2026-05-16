@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *SubRepo) GetByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]model.Subscription, error) {
+func (r *Repository) GetByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]model.Subscription, error) {
 	query := `
     SELECT
         id,

@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+func (r *Repository) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
 	query := `
     SELECT
         id,
