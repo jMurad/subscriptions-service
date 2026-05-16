@@ -238,30 +238,45 @@ func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (r *SubRepo) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
-	query := `
-	SELECT COALESCE(SUM(price), 0)
-	FROM subscriptions
-	WHERE start_date >= $1
-	AND start_date <= $2
-	`
+func (r *SubRepo) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
+	conditions := make([]string, 0)
+	args := make([]any, 0)
 
-	args := []interface{}{
-		from,
-		to,
+	argPos := 1
+
+	if from != nil {
+		conditions = append(conditions, "start_date >= $"+strconv.Itoa(argPos))
+		args = append(args, *from)
+
+		argPos++
 	}
+	if to != nil {
+		conditions = append(conditions, "start_date <= $"+strconv.Itoa(argPos))
+		args = append(args, *to)
 
-	argPos := 3
-
+		argPos++
+	}
 	if userID != nil {
-		query += ` AND user_id = $` + strconv.Itoa(argPos)
+		conditions = append(conditions, "user_id = $"+strconv.Itoa(argPos))
 		args = append(args, *userID)
+
+		argPos++
+	}
+	if serviceName != nil {
+		conditions = append(conditions, "service_name = $"+strconv.Itoa(argPos))
+		args = append(args, *serviceName)
+
 		argPos++
 	}
 
-	if serviceName != nil {
-		query += ` AND service_name = $` + strconv.Itoa(argPos)
-		args = append(args, *serviceName)
+	query := `
+    SELECT COALESCE(SUM(price), 0)
+    FROM subscriptions
+    WHERE deleted_at IS NULL
+    `
+
+	if len(conditions) > 0 {
+		query += " AND " + strings.Join(conditions, " AND ")
 	}
 
 	var total int
@@ -271,8 +286,9 @@ func (r *SubRepo) Total(ctx context.Context, userID *uuid.UUID, serviceName *str
 		query,
 		args...,
 	).Scan(&total)
+
 	if err != nil {
-		return 0, err
+		return 0, apperrors.MapPostgresError(err)
 	}
 
 	return total, nil
