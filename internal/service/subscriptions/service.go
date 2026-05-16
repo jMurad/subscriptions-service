@@ -8,7 +8,6 @@ import (
 	apperrors "subscriptions-service/internal/errors"
 	"subscriptions-service/internal/logger"
 	"subscriptions-service/internal/model"
-	"subscriptions-service/internal/repository"
 
 	"github.com/google/uuid"
 	"go.uber.org/zap"
@@ -21,10 +20,10 @@ const (
 )
 
 type SubService struct {
-	repo repository.SubscriptionRepository
+	repo SubscriptionRepository
 }
 
-func NewSubscriptionService(repo repository.SubscriptionRepository) *SubService {
+func NewSubscriptionService(repo SubscriptionRepository) *SubService {
 	return &SubService{
 		repo: repo,
 	}
