@@ -9,10 +9,11 @@ import (
 )
 
 type SubscriptionService interface {
-	Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error)
-	GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error)
-	List(ctx context.Context, limit, offset int) ([]model.Subscription, error)
-	Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error
-	Delete(ctx context.Context, id uuid.UUID) error
-	Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error)
+	Create(context.Context, model.Subscription) (uuid.UUID, error)
+	GetByID(context.Context, uuid.UUID) (*model.Subscription, error)
+	GetByUserID(context.Context, uuid.UUID, int, int) ([]model.Subscription, error)
+	List(context.Context, int, int) ([]model.Subscription, error)
+	Update(context.Context, uuid.UUID, model.SubscriptionUpdate) error
+	Delete(context.Context, uuid.UUID) error
+	Total(context.Context, *uuid.UUID, *string, *time.Time, *time.Time) (int, error)
 }
