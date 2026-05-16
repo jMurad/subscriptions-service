@@ -4,8 +4,11 @@ import (
 	"context"
 
 	"subscriptions-service/internal/config"
-	"subscriptions-service/internal/handler"
-	"subscriptions-service/internal/repository/postgres"
+	"subscriptions-service/internal/transport/http/handler"
+
+	// "subscriptions-service/internal/handler"
+
+	repo "subscriptions-service/internal/repository/postgres/subscriptions"
 	"subscriptions-service/internal/service/subscriptions"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -55,7 +58,7 @@ func newPostgres(logg *zap.Logger, cfg *config.Config) (*pgxpool.Pool, error) {
 func initDependencies(logg *zap.Logger, db *pgxpool.Pool) *Dependencies {
 	logg.Info("initializing dependencies")
 
-	repo := postgres.NewSubscriptionRepository(db)
+	repo := repo.NewRepository(db)
 
 	logg.Info("repository initialized")
 
