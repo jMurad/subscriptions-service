@@ -104,19 +104,17 @@ func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscriptio
 }
 
 func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
-	log := logger.FromContext(ctx)
-	start := time.Now()
-
-	query := `
+		query := `
 	SELECT
 		id,
+user_id,
 		service_name,
 		price,
-		user_id,
-		start_date,
+				start_date,
 		end_date,
 		created_at
 	FROM subscriptions
+WHERE deleted_at IS NULL
 	ORDER BY created_at DESC
 	LIMIT $1 OFFSET $2
 	`
@@ -128,37 +126,36 @@ func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscrip
 		offset,
 	)
 	if err != nil {
-		log.Error("repository list subscriptions query failed", zap.Error(err))
-		return nil, err
+				return nil, apperrors.MapPostgresError(err)
 	}
+
 	defer rows.Close()
 
-	var subscriptions []model.Subscription
+	subscriptions := make([]model.Subscription, 0, limit)
 
 	for rows.Next() {
+
 		var sub model.Subscription
 
 		err = rows.Scan(
 			&sub.ID,
+&sub.UserID,
 			&sub.ServiceName,
 			&sub.Price,
-			&sub.UserID,
-			&sub.StartDate,
+						&sub.StartDate,
 			&sub.EndDate,
 			&sub.CreatedAt,
 		)
 		if err != nil {
-			log.Error("repository list subscriptions scan failed", zap.Error(err))
-			return nil, err
+						return nil, apperrors.MapPostgresError(err)
 		}
 
 		subscriptions = append(subscriptions, sub)
 	}
 
-	log.Info("repository list subscriptions query completed",
-		zap.Int("count", len(subscriptions)),
-		zap.Duration("duration", time.Since(start)),
-	)
+	if rows.Err() != nil {
+		return nil, apperrors.MapPostgresError(rows.Err())
+	}
 
 	return subscriptions, nil
 }
