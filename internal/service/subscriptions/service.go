@@ -2,10 +2,10 @@ package subscriptions
 
 import (
 	"context"
-"strings"
+	"strings"
 	"time"
 
-apperrors "subscriptions-service/internal/errors"
+	apperrors "subscriptions-service/internal/errors"
 	"subscriptions-service/internal/logger"
 	"subscriptions-service/internal/model"
 	"subscriptions-service/internal/repository"
@@ -31,11 +31,11 @@ func NewSubscriptionService(repo repository.SubscriptionRepository) *SubService 
 }
 
 func (s *SubService) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
-ctx, cancel := context.WithTimeout(ctx, shortTimeout)
+	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
 	log := logger.FromContext(ctx)
-	
+
 	sub.ServiceName = strings.TrimSpace(sub.ServiceName)
 
 	if sub.ServiceName == "" {
@@ -46,7 +46,7 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 		)
 
 		log.Warn("validation failed",
-		zap.String("field", "service_name"),
+			zap.String("field", "service_name"),
 			zap.Error(err),
 		)
 
@@ -61,7 +61,7 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 		)
 
 		log.Warn("validation failed",
-		zap.String("field", "price"),
+			zap.String("field", "price"),
 			zap.Error(err),
 		)
 
@@ -80,7 +80,7 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 			"validation failed",
 			zap.String("field", "end_date"),
 			zap.Error(err),
-	)
+		)
 
 		return uuid.Nil, err
 	}
@@ -105,11 +105,11 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 }
 
 func (s *SubService) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
-ctx, cancel := context.WithTimeout(ctx, shortTimeout)
+	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
 	log := logger.FromContext(ctx)
-	
+
 	sub, err := s.repo.GetByID(ctx, id)
 	if err != nil {
 		log.Error("failed to get subscription",
@@ -128,11 +128,11 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 }
 
 func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
-ctx, cancel := context.WithTimeout(ctx, mediumTimeout)
+	ctx, cancel := context.WithTimeout(ctx, mediumTimeout)
 	defer cancel()
 
 	log := logger.FromContext(ctx)
-	
+
 	if limit <= 0 {
 		limit = 10
 	}
@@ -150,18 +150,18 @@ ctx, cancel := context.WithTimeout(ctx, mediumTimeout)
 		)
 
 		log.Warn("validation failed",
-		zap.String("field", "offset"),
-	zap.Error(err),
+			zap.String("field", "offset"),
+			zap.Error(err),
 		)
 
 		return nil, err
 	}
 
 	subscriptions, err := s.repo.List(
-ctx,
-limit,
-offset,
-)
+		ctx,
+		limit,
+		offset,
+	)
 	if err != nil {
 		log.Error("failed to list subscriptions",
 			zap.Int("limit", limit),
@@ -176,11 +176,11 @@ offset,
 }
 
 func (s *SubService) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
-ctx, cancel := context.WithTimeout(ctx, shortTimeout)
+	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
 	log := logger.FromContext(ctx)
-	
+
 	if update.ServiceName == nil && update.Price == nil && update.EndDate == nil {
 		err := apperrors.WrapMessage(
 			nil,
@@ -188,7 +188,7 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 			"at least one field is required",
 		)
 
-	log.Warn("validation failed",
+		log.Warn("validation failed",
 			zap.Error(err),
 		)
 
@@ -248,17 +248,17 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	log.Info(
 		"subscription updated",
 		zap.String("subscription_id", id.String()),
-			)
+	)
 
 	return nil
 }
 
 func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
-ctx, cancel := context.WithTimeout(ctx, shortTimeout)
+	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
 	log := logger.FromContext(ctx)
-	
+
 	err := s.repo.Delete(ctx, id)
 	if err != nil {
 		log.Error("failed to delete subscription",
@@ -271,31 +271,62 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 
 	log.Info("subscription deleted",
 		zap.String("subscription_id", id.String()),
-			)
+	)
 
 	return nil
 }
 
-func (s *SubService) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
+func (s *SubService) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
+	ctx, cancel := context.WithTimeout(ctx, longTimeout)
+	defer cancel()
+
 	log := logger.FromContext(ctx)
-	start := time.Now()
 
-	log.Info("calculating subscriptions total")
+	if from != nil && to != nil && from.After(*to) {
+		err := apperrors.WrapMessage(
+			nil,
+			apperrors.ErrValidation,
+			"from date must be before to date",
+		)
 
-	total, err := s.repo.Total(ctx, userID, serviceName, from, to)
-	if err != nil {
-		log.Error("failed to calculate subscriptions total",
+		log.Warn("validation failed",
+			zap.String("field", "date_range"),
 			zap.Error(err),
-			zap.Duration("duration", time.Since(start)),
 		)
 
 		return 0, err
 	}
 
-	log.Info("subscriptions total calculated",
-		zap.Int("total", total),
-		zap.Duration("duration", time.Since(start)),
+	total, err := s.repo.Total(
+		ctx,
+		userID,
+		serviceName,
+		from,
+		to,
 	)
+	if err != nil {
+		fields := []zap.Field{zap.Error(err)}
+
+		if userID != nil {
+			fields = append(
+				fields,
+				zap.String("user_id", userID.String()),
+			)
+		}
+
+		if serviceName != nil {
+			fields = append(
+				fields,
+				zap.String("service_name", *serviceName),
+			)
+		}
+
+		log.Error("failed to calculate subscriptions total",
+			fields...,
+		)
+
+		return 0, err
+	}
 
 	return total, nil
 }
