@@ -19,17 +19,17 @@ const (
 	longTimeout   = 10 * time.Second
 )
 
-type SubService struct {
+type service struct {
 	repo Repository
 }
 
-func NewSubscriptionService(repo Repository) *SubService {
-	return &SubService{
+func NewService(repo Repository) *service {
+	return &service{
 		repo: repo,
 	}
 }
 
-func (s *SubService) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
+func (s *service) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
 	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
@@ -103,7 +103,7 @@ func (s *SubService) Create(ctx context.Context, sub model.Subscription) (uuid.U
 	return id, nil
 }
 
-func (s *SubService) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
+func (s *service) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
 	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
@@ -126,7 +126,7 @@ func (s *SubService) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscrip
 	return sub, nil
 }
 
-func (s *SubService) GetByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]model.Subscription, error) {
+func (s *service) GetByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]model.Subscription, error) {
 	ctx, cancel := context.WithTimeout(ctx, mediumTimeout)
 	defer cancel()
 
@@ -176,7 +176,7 @@ func (s *SubService) GetByUserID(ctx context.Context, userID uuid.UUID, limit, o
 	return subscriptions, nil
 }
 
-func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
+func (s *service) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
 	ctx, cancel := context.WithTimeout(ctx, mediumTimeout)
 	defer cancel()
 
@@ -224,7 +224,7 @@ func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subsc
 	return subscriptions, nil
 }
 
-func (s *SubService) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
+func (s *service) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
 	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
@@ -302,7 +302,7 @@ func (s *SubService) Update(ctx context.Context, id uuid.UUID, update model.Subs
 	return nil
 }
 
-func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
+func (s *service) Delete(ctx context.Context, id uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 	defer cancel()
 
@@ -325,7 +325,7 @@ func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
 	return nil
 }
 
-func (s *SubService) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
+func (s *service) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
 	ctx, cancel := context.WithTimeout(ctx, longTimeout)
 	defer cancel()
 

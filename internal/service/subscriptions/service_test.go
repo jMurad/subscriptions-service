@@ -20,7 +20,7 @@ import (
 func TestCreate_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	subID := uuid.New()
 
@@ -50,7 +50,7 @@ func TestCreate_Success(t *testing.T) {
 func TestCreate_EmptyServiceName(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	sub := model.Subscription{
 		UserID:      uuid.New(),
@@ -84,7 +84,7 @@ func TestCreate_EmptyServiceName(t *testing.T) {
 func TestCreate_InvalidPrice(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	sub := model.Subscription{
 		UserID:      uuid.New(),
@@ -118,7 +118,7 @@ func TestCreate_InvalidPrice(t *testing.T) {
 func TestCreate_InvalidDateRange(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	start := time.Now()
 	end := start.Add(-24 * time.Hour)
@@ -156,7 +156,7 @@ func TestCreate_InvalidDateRange(t *testing.T) {
 func TestCreate_TrimServiceName(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	subID := uuid.New()
 
@@ -190,7 +190,7 @@ func TestCreate_TrimServiceName(t *testing.T) {
 func TestCreate_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	sub := model.Subscription{
 		UserID:      uuid.New(),
@@ -223,7 +223,7 @@ func TestCreate_RepositoryError(t *testing.T) {
 func TestCreate_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	sub := model.Subscription{
 		UserID:      uuid.New(),
@@ -271,7 +271,7 @@ func TestCreate_ContextCanceled(t *testing.T) {
 func TestCreate_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	repo.On("Create",
 		mock.Anything,
@@ -321,7 +321,7 @@ func TestCreate_ContextDeadlineExceeded(t *testing.T) {
 func TestGetByID_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -354,7 +354,7 @@ func TestGetByID_Success(t *testing.T) {
 func TestGetByID_NotFound(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -393,7 +393,7 @@ func TestGetByID_NotFound(t *testing.T) {
 func TestGetByID_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -421,7 +421,7 @@ func TestGetByID_RepositoryError(t *testing.T) {
 func TestGetByID_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -468,7 +468,7 @@ func TestGetByID_ContextCanceled(t *testing.T) {
 func TestGetByID_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -516,7 +516,7 @@ func TestGetByID_ContextDeadlineExceeded(t *testing.T) {
 func TestGetByUserID_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -555,7 +555,7 @@ func TestGetByUserID_Success(t *testing.T) {
 func TestGetByUserID_DefaultLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -585,7 +585,7 @@ func TestGetByUserID_DefaultLimit(t *testing.T) {
 func TestGetByUserID_MaxLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -615,7 +615,7 @@ func TestGetByUserID_MaxLimit(t *testing.T) {
 func TestGetByUserID_InvalidOffset(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -646,7 +646,7 @@ func TestGetByUserID_InvalidOffset(t *testing.T) {
 func TestGetByUserID_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -678,7 +678,7 @@ func TestGetByUserID_RepositoryError(t *testing.T) {
 func TestGetByUserID_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -728,7 +728,7 @@ func TestGetByUserID_ContextCanceled(t *testing.T) {
 func TestGetByUserID_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -783,7 +783,7 @@ func TestGetByUserID_ContextDeadlineExceeded(t *testing.T) {
 func TestList_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	expected := []model.Subscription{
 		{
@@ -818,7 +818,7 @@ func TestList_Success(t *testing.T) {
 func TestList_DefaultLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	expected := []model.Subscription{}
 
@@ -844,7 +844,7 @@ func TestList_DefaultLimit(t *testing.T) {
 func TestList_MaxLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	expected := []model.Subscription{}
 
@@ -871,7 +871,7 @@ func TestList_MaxLimit(t *testing.T) {
 func TestList_InvalidOffset(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	subs, err := svc.List(
 		context.Background(),
@@ -899,7 +899,7 @@ func TestList_InvalidOffset(t *testing.T) {
 func TestList_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	expectedErr := apperrors.ErrInternal
 
@@ -927,7 +927,7 @@ func TestList_RepositoryError(t *testing.T) {
 func TestList_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	ctx, cancel := context.WithCancel(
 		context.Background(),
@@ -973,7 +973,7 @@ func TestList_ContextCanceled(t *testing.T) {
 func TestList_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	repo.On("List",
 		mock.Anything,
@@ -1021,7 +1021,7 @@ func TestList_ContextDeadlineExceeded(t *testing.T) {
 func TestUpdate_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1051,7 +1051,7 @@ func TestUpdate_Success(t *testing.T) {
 func TestUpdate_EmptyUpdate(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	err := svc.Update(
 		context.Background(),
@@ -1077,7 +1077,7 @@ func TestUpdate_EmptyUpdate(t *testing.T) {
 func TestUpdate_InvalidPrice(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	price := 0
 
@@ -1109,7 +1109,7 @@ func TestUpdate_InvalidPrice(t *testing.T) {
 func TestUpdate_EmptyServiceName(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	name := ""
 
@@ -1141,7 +1141,7 @@ func TestUpdate_EmptyServiceName(t *testing.T) {
 func TestUpdate_TrimServiceName(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1177,7 +1177,7 @@ func TestUpdate_TrimServiceName(t *testing.T) {
 func TestUpdate_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1210,7 +1210,7 @@ func TestUpdate_RepositoryError(t *testing.T) {
 func TestUpdate_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1261,7 +1261,7 @@ func TestUpdate_ContextCanceled(t *testing.T) {
 func TestUpdate_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1314,7 +1314,7 @@ func TestUpdate_ContextDeadlineExceeded(t *testing.T) {
 func TestDelete_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1336,7 +1336,7 @@ func TestDelete_Success(t *testing.T) {
 func TestDelete_NotFound(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1373,7 +1373,7 @@ func TestDelete_NotFound(t *testing.T) {
 func TestDelete_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1399,7 +1399,7 @@ func TestDelete_RepositoryError(t *testing.T) {
 func TestDelete_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1442,7 +1442,7 @@ func TestDelete_ContextCanceled(t *testing.T) {
 func TestDelete_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	id := uuid.New()
 
@@ -1486,7 +1486,7 @@ func TestDelete_ContextDeadlineExceeded(t *testing.T) {
 func TestTotal_SuccessWithoutFilters(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	expectedTotal := 999
 
@@ -1516,7 +1516,7 @@ func TestTotal_SuccessWithoutFilters(t *testing.T) {
 func TestTotal_SuccessWithAllFilters(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	userID := uuid.New()
 
@@ -1553,7 +1553,7 @@ func TestTotal_SuccessWithAllFilters(t *testing.T) {
 func TestTotal_InvalidDateRange(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	from := time.Now()
 	to := from.Add(-24 * time.Hour)
@@ -1586,7 +1586,7 @@ func TestTotal_InvalidDateRange(t *testing.T) {
 func TestTotal_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	expectedErr := apperrors.ErrInternal
 
@@ -1618,7 +1618,7 @@ func TestTotal_RepositoryError(t *testing.T) {
 func TestTotal_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	ctx, cancel := context.WithCancel(
 		context.Background(),
@@ -1668,7 +1668,7 @@ func TestTotal_ContextCanceled(t *testing.T) {
 func TestTotal_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := subscriptions.NewService(repo)
 
 	repo.On("Total",
 		mock.Anything,

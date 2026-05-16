@@ -9,7 +9,7 @@ import (
 	// "subscriptions-service/internal/handler"
 
 	repo "subscriptions-service/internal/repository/postgres/subscriptions"
-	"subscriptions-service/internal/service/subscriptions"
+	service "subscriptions-service/internal/service/subscriptions"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
@@ -62,7 +62,7 @@ func initDependencies(logg *zap.Logger, db *pgxpool.Pool) *Dependencies {
 
 	logg.Info("repository initialized")
 
-	svc := subscriptions.NewSubscriptionService(repo)
+	svc := service.NewService(repo)
 
 	logg.Info("service initialized")
 
