@@ -60,45 +60,35 @@ func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID
 }
 
 func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
-	log := logger.FromContext(ctx)
-	start := time.Now()
-
-	query := `
+		query := `
 	SELECT
 		id,
+user_id,
 		service_name,
 		price,
-		user_id,
-		start_date,
+				start_date,
 		end_date,
 		created_at
 	FROM subscriptions
 	WHERE id = $1
+AND deleted_at IS NULL
 	`
 
 	var sub model.Subscription
 
 	err := r.db.QueryRow(ctx, query, id).Scan(
 		&sub.ID,
+&sub.UserID,
 		&sub.ServiceName,
 		&sub.Price,
-		&sub.UserID,
-		&sub.StartDate,
+				&sub.StartDate,
 		&sub.EndDate,
 		&sub.CreatedAt,
 	)
-	if err != nil {
-		log.Error("repository get subscription query failed",
-			zap.String("subscription_id", id.String()),
-			zap.Error(err),
-		)
-		return nil, err
-	}
 
-	log.Info("repository get subscription query completed",
-		zap.String("subscription_id", id.String()),
-		zap.Duration("duration", time.Since(start)),
-	)
+	if err != nil {
+		return nil, apperrors.MapPostgresError(err)
+	}
 
 	return &sub, nil
 }
