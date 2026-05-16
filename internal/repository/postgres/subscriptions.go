@@ -2,16 +2,16 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"strconv"
+	"strings"
 	"time"
 
-	"subscriptions-service/internal/logger"
+	apperrors "subscriptions-service/internal/errors"
 	"subscriptions-service/internal/model"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 )
 
 type SubRepo struct {
@@ -25,9 +25,6 @@ func NewSubscriptionRepository(db *pgxpool.Pool) *SubRepo {
 }
 
 func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID, error) {
-	log := logger.FromContext(ctx)
-	start := time.Now()
-
 	query := `
 	INSERT INTO subscriptions
 	(service_name, price, user_id, start_date, end_date)
@@ -46,42 +43,37 @@ func (r *SubRepo) Create(ctx context.Context, sub model.Subscription) (uuid.UUID
 		sub.StartDate,
 		sub.EndDate,
 	).Scan(&id)
-	if err != nil {
-		log.Error("repository create subscription query failed", zap.Error(err))
-		return uuid.Nil, err
-	}
 
-	log.Info("repository create subscription query completed",
-		zap.String("subscription_id", id.String()),
-		zap.Duration("duration", time.Since(start)),
-	)
+	if err != nil {
+		return uuid.Nil, apperrors.MapPostgresError(err)
+	}
 
 	return id, nil
 }
 
 func (r *SubRepo) GetByID(ctx context.Context, id uuid.UUID) (*model.Subscription, error) {
-		query := `
-	SELECT
-		id,
-user_id,
-		service_name,
-		price,
-				start_date,
-		end_date,
-		created_at
-	FROM subscriptions
-	WHERE id = $1
-AND deleted_at IS NULL
-	`
+	query := `
+    SELECT
+        id,
+        user_id,
+        service_name,
+        price,
+        start_date,
+        end_date,
+        created_at
+    FROM subscriptions
+    WHERE id = $1
+    AND deleted_at IS NULL
+    `
 
 	var sub model.Subscription
 
 	err := r.db.QueryRow(ctx, query, id).Scan(
 		&sub.ID,
-&sub.UserID,
+		&sub.UserID,
 		&sub.ServiceName,
 		&sub.Price,
-				&sub.StartDate,
+		&sub.StartDate,
 		&sub.EndDate,
 		&sub.CreatedAt,
 	)
@@ -153,20 +145,20 @@ func (r *SubRepo) GetByUserID(ctx context.Context, userID uuid.UUID, limit, offs
 }
 
 func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
-		query := `
-	SELECT
-		id,
-user_id,
-		service_name,
-		price,
-				start_date,
-		end_date,
-		created_at
-	FROM subscriptions
-WHERE deleted_at IS NULL
-	ORDER BY created_at DESC
-	LIMIT $1 OFFSET $2
-	`
+	query := `
+    SELECT
+        id,
+        user_id,
+        service_name,
+        price,
+        start_date,
+        end_date,
+        created_at
+    FROM subscriptions
+    WHERE deleted_at IS NULL
+    ORDER BY created_at DESC
+    LIMIT $1 OFFSET $2
+    `
 
 	rows, err := r.db.Query(
 		ctx,
@@ -175,7 +167,7 @@ WHERE deleted_at IS NULL
 		offset,
 	)
 	if err != nil {
-				return nil, apperrors.MapPostgresError(err)
+		return nil, apperrors.MapPostgresError(err)
 	}
 
 	defer rows.Close()
@@ -188,15 +180,15 @@ WHERE deleted_at IS NULL
 
 		err = rows.Scan(
 			&sub.ID,
-&sub.UserID,
+			&sub.UserID,
 			&sub.ServiceName,
 			&sub.Price,
-						&sub.StartDate,
+			&sub.StartDate,
 			&sub.EndDate,
 			&sub.CreatedAt,
 		)
 		if err != nil {
-						return nil, apperrors.MapPostgresError(err)
+			return nil, apperrors.MapPostgresError(err)
 		}
 
 		subscriptions = append(subscriptions, sub)
@@ -266,15 +258,15 @@ func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.Subscri
 }
 
 func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
-		query := `
-	UPDATE subscriptions
-SET deleted_at = NOW(),
+	query := `
+    UPDATE subscriptions
+    SET deleted_at = NOW(),
         status = 'canceled'
-	WHERE id = $1
-AND deleted_at IS NULL
-	`
+    WHERE id = $1
+    AND deleted_at IS NULL
+    `
 
-	result, err := r.db.Exec(		ctx, 		query, id	)
+	result, err := r.db.Exec(ctx, query, id)
 	if err != nil {
 		return apperrors.MapPostgresError(err)
 	}
