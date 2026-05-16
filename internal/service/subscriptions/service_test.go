@@ -7,8 +7,8 @@ import (
 
 	apperrors "subscriptions-service/internal/errors"
 	"subscriptions-service/internal/model"
-	"subscriptions-service/internal/service/mocks"
 	"subscriptions-service/internal/service/subscriptions"
+	"subscriptions-service/internal/service/subscriptions/mocks"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
