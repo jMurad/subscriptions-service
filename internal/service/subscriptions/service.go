@@ -12,6 +12,12 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	shortTimeout  = 3 * time.Second
+	mediumTimeout = 5 * time.Second
+	longTimeout   = 10 * time.Second
+)
+
 type SubService struct {
 	repo repository.SubscriptionRepository
 }
