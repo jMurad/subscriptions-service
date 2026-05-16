@@ -201,39 +201,22 @@ func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.Subscri
 }
 
 func (r *SubRepo) Delete(ctx context.Context, id uuid.UUID) error {
-	log := logger.FromContext(ctx)
-	start := time.Now()
-
-	query := `
-	DELETE FROM subscriptions
+		query := `
+	UPDATE subscriptions
+SET deleted_at = NOW(),
+        status = 'canceled'
 	WHERE id = $1
+AND deleted_at IS NULL
 	`
 
-	result, err := r.db.Exec(
-		ctx,
-		query,
-		id,
-	)
+	result, err := r.db.Exec(		ctx, 		query, id	)
 	if err != nil {
-		log.Error("repository delete subscription query failed",
-			zap.String("subscription_id", id.String()),
-			zap.Error(err),
-		)
-		return err
+		return apperrors.MapPostgresError(err)
 	}
 
 	if result.RowsAffected() == 0 {
-		err = errors.New("subscription not found")
-		log.Warn("repository delete subscription affected zero rows",
-			zap.String("subscription_id", id.String()),
-		)
-		return err
+		return apperrors.MapPostgresError(pgx.ErrNoRows)
 	}
-
-	log.Info("repository delete subscription query completed",
-		zap.String("subscription_id", id.String()),
-		zap.Duration("duration", time.Since(start)),
-	)
 
 	return nil
 }
