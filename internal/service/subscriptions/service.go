@@ -254,26 +254,24 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 }
 
 func (s *SubService) Delete(ctx context.Context, id uuid.UUID) error {
+ctx, cancel := context.WithTimeout(ctx, shortTimeout)
+	defer cancel()
+
 	log := logger.FromContext(ctx)
-	start := time.Now()
-
-	log.Info("service delete subscription started",
-		zap.String("subscription_id", id.String()),
-	)
-
+	
 	err := s.repo.Delete(ctx, id)
 	if err != nil {
-		log.Error("service delete subscription failed",
+		log.Error("failed to delete subscription",
 			zap.String("subscription_id", id.String()),
 			zap.Error(err),
 		)
+
 		return err
 	}
 
-	log.Info("service delete subscription completed",
+	log.Info("subscription deleted",
 		zap.String("subscription_id", id.String()),
-		zap.Duration("duration", time.Since(start)),
-	)
+			)
 
 	return nil
 }
