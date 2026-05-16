@@ -164,38 +164,57 @@ func (r *SubRepo) List(ctx context.Context, limit, offset int) ([]model.Subscrip
 }
 
 func (r *SubRepo) Update(ctx context.Context, id uuid.UUID, update model.SubscriptionUpdate) error {
-	log := logger.FromContext(ctx)
-	start := time.Now()
+	conditions := make([]string, 0)
+	args := make([]any, 0)
+
+	argPos := 1
+
+	if update.ServiceName != nil {
+		conditions = append(conditions, "service_name = $"+strconv.Itoa(argPos))
+		args = append(args, *update.ServiceName)
+
+		argPos++
+	}
+
+	if update.Price != nil {
+		conditions = append(conditions, "price = $"+strconv.Itoa(argPos))
+		args = append(args, *update.Price)
+
+		argPos++
+	}
+
+	if update.EndDate != nil {
+		conditions = append(conditions, "end_date = $"+strconv.Itoa(argPos))
+		args = append(args, *update.EndDate)
+
+		argPos++
+	}
+
+	if len(conditions) == 0 {
+		return nil
+	}
 
 	query := `
 	UPDATE subscriptions
-	SET
-		service_name = COALESCE($1, service_name),
-		price = COALESCE($2, price),
-		end_date = COALESCE($3, end_date)
-	WHERE id = $4
+	SET ` + strings.Join(conditions, ", ") + `
+	WHERE id = $` + strconv.Itoa(argPos) + `
+	  AND deleted_at IS NULL
 	`
 
-	_, err := r.db.Exec(
+	args = append(args, id)
+
+	result, err := r.db.Exec(
 		ctx,
 		query,
-		update.ServiceName,
-		update.Price,
-		update.EndDate,
-		id,
+		args...,
 	)
 	if err != nil {
-		log.Error("repository update subscription query failed",
-			zap.String("subscription_id", id.String()),
-			zap.Error(err),
-		)
-		return err
+		return apperrors.MapPostgresError(err)
 	}
 
-	log.Info("repository update subscription query completed",
-		zap.String("subscription_id", id.String()),
-		zap.Duration("duration", time.Since(start)),
-	)
+	if result.RowsAffected() == 0 {
+		return apperrors.MapPostgresError(pgx.ErrNoRows)
+	}
 
 	return nil
 }
