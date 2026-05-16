@@ -128,24 +128,49 @@ ctx, cancel := context.WithTimeout(ctx, shortTimeout)
 }
 
 func (s *SubService) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
+ctx, cancel := context.WithTimeout(ctx, mediumTimeout)
+	defer cancel()
+
 	log := logger.FromContext(ctx)
-	start := time.Now()
+	
+	if limit <= 0 {
+		limit = 10
+	}
 
-	log.Info("service list subscriptions started",
-		zap.Int("limit", limit),
-		zap.Int("offset", offset),
-	)
+	if limit > 100 {
+		limit = 100
+	}
 
-	subscriptions, err := s.repo.List(ctx, limit, offset)
-	if err != nil {
-		log.Error("service list subscriptions failed", zap.Error(err))
+	if offset < 0 {
+
+		err := apperrors.WrapMessage(
+			nil,
+			apperrors.ErrValidation,
+			"offset must be greater than or equal to 0",
+		)
+
+		log.Warn("validation failed",
+		zap.String("field", "offset"),
+	zap.Error(err),
+		)
+
 		return nil, err
 	}
 
-	log.Info("service list subscriptions completed",
-		zap.Int("count", len(subscriptions)),
-		zap.Duration("duration", time.Since(start)),
-	)
+	subscriptions, err := s.repo.List(
+ctx,
+limit,
+offset,
+)
+	if err != nil {
+		log.Error("failed to list subscriptions",
+			zap.Int("limit", limit),
+			zap.Int("offset", offset),
+			zap.Error(err),
+		)
+
+		return nil, err
+	}
 
 	return subscriptions, nil
 }
