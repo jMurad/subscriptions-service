@@ -1,0 +1,124 @@
+# Subscriptions Service
+
+REST API сервис для агрегации и управления онлайн-подписками пользователей.
+
+Проект написан на Go с использованием PostgreSQL и построен с применением принципов Clean Architecture, middleware, structured logging и Swagger/OpenAPI.
+
+---
+
+## Возможности
+
+- CRUD операции для подписок
+- Подсчёт общей стоимости подписок за период
+- Фильтрация по пользователю и сервису
+- PostgreSQL constraints и валидация данных
+- Graceful shutdown
+- Middleware chain
+- Structured logging (`zap`)
+- Swagger/OpenAPI документация
+- Unit и integration tests
+- Docker/Docker Compose
+- SQL migrations
+- Централизованная обработка ошибок
+- Context propagation
+- Error wrapping через `errors.Is`
+
+---
+
+# Технологии
+
+- Go 1.25
+- PostgreSQL
+- Chi Router
+- pgx
+- Zap Logger
+- Swagger (swaggo)
+- Docker & Docker Compose
+- Testify
+
+---
+
+# Архитектура
+
+Проект построен по принципам Layered / Clean Architecture.
+
+```text
+HTTP Handler
+     ↓
+ Service Layer
+     ↓
+Repository Layer
+     ↓
+ PostgreSQL
+```
+
+## Handler Layer
+
+Отвечает за:
+
+- обработку HTTP запросов
+- валидацию
+- DTO
+- преобразование ответов
+- HTTP status codes
+
+## Service Layer
+
+Содержит бизнес-логику.
+
+## Repository Layer
+
+Отвечает за работу с PostgreSQL.
+
+---
+
+# Структура проекта
+
+```text
+subscriptions-service/
+├── cmd/
+├── docs/
+├── internal/
+├── migrations/
+├── Dockerfile
+├── docker-compose.yml
+├── Makefile
+└── go.mod
+```
+
+---
+
+# Запуск проекта
+
+## Docker
+
+```bash
+make docker-up
+```
+
+## Локальный запуск
+
+```bash
+make migrate-up
+make run
+```
+
+---
+
+# Swagger
+
+```text
+http://localhost:8080/swagger/index.html
+```
+
+---
+
+# Тестирование
+
+```bash
+make test
+```
+
+---
+
+
