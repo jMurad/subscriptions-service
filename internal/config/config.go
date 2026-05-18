@@ -1,36 +1,39 @@
 package config
 
 import (
-	"fmt"
+	"log"
 	"os"
 )
 
 type Config struct {
-	AppPort string
-	DBUrl   string
+	AppPort     string
+	DatabaseURL string
 }
 
-func Load() (*Config, error) {
+func MustLoad() *Config {
 	cfg := &Config{
-		AppPort: getEnv("APP_PORT", "8080"),
-		DBUrl: fmt.Sprintf(
-			"postgres://%s:%s@%s:%s/%s?sslmode=%s",
-			getEnv("DB_USER", "postgres"),
-			getEnv("DB_PASSWORD", "postgres"),
-			getEnv("DB_HOST", "localhost"),
-			getEnv("DB_PORT", "5432"),
-			getEnv("DB_NAME", "subscriptions"),
-			getEnv("DB_SSLMODE", "disable"),
-		),
+		AppPort:     getEnv("APP_PORT", "8080"),
+		DatabaseURL: mustEnv("DATABASE_URL"),
 	}
 
-	return cfg, nil
+	return cfg
 }
 
-func getEnv(key, fallback string) string {
+func getEnv(key string, defaultValue string) string {
 	value := os.Getenv(key)
+
 	if value == "" {
-		return fallback
+		return defaultValue
+	}
+
+	return value
+}
+
+func mustEnv(key string) string {
+	value := os.Getenv(key)
+
+	if value == "" {
+		log.Fatalf("%s environment variable is required", key)
 	}
 
 	return value
