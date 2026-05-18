@@ -1,9 +1,7 @@
 .git
 .idea
 .vscode
-.env
 tmp
 bin
 vendor
-docs
 .DS_Store
