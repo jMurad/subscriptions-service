@@ -3,13 +3,12 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"subscriptions-service/internal/contextkeys"
 
 	"github.com/google/uuid"
 )
 
 type contextKey string
-
-const RequestIDKey contextKey = "request_id"
 
 // Add request ID to request context
 func RequestID(next http.Handler) http.Handler {
@@ -18,20 +17,18 @@ func RequestID(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(
 			r.Context(),
-			RequestIDKey,
+			contextkeys.RequestID,
 			requestID,
 		)
 
-		r = r.WithContext(ctx)
-
 		w.Header().Set("X-Request-ID", requestID)
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func GetRequestID(ctx context.Context) string {
-	requestID, ok := ctx.Value(RequestIDKey).(string)
+	requestID, ok := ctx.Value(contextkeys.RequestID).(string)
 
 	if !ok {
 		return "unknown"
