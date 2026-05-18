@@ -8,43 +8,30 @@ import (
 	"go.uber.org/zap"
 )
 
-type responseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func (rw *responseWriter) WriteHeader(code int) {
-	rw.statusCode = code
-	rw.ResponseWriter.WriteHeader(code)
-}
-
 // Log HTTP requests
-func Logger(log *zap.Logger) func(http.Handler) http.Handler {
+func Logger(base *zap.Logger) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
 
 			requestID := GetRequestID(r.Context())
 
-			requestLogger := log.With(zap.String("request_id", requestID))
-
-			ctx := logger.ToContext(
-				r.Context(),
-				requestLogger,
+			log := base.With(
+				zap.String("request_id", requestID),
+				zap.String("method", r.Method),
+				zap.String("path", r.URL.Path),
 			)
 
-			r = r.WithContext(ctx)
+			ctx := logger.ToContext(r.Context(), log)
 
 			rw := &responseWriter{
 				ResponseWriter: w,
 				statusCode:     http.StatusOK,
 			}
 
-			next.ServeHTTP(rw, r)
+			next.ServeHTTP(rw, r.WithContext(ctx))
 
-			requestLogger.Info("http request",
-				zap.String("method", r.Method),
-				zap.String("path", r.URL.Path),
+			log.Info("http request",
 				zap.Int("status", rw.statusCode),
 				zap.Duration("duration", time.Since(start)),
 			)
