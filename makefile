@@ -26,7 +26,7 @@ migrate-create:
 	migrate create -ext sql -dir migrations -seq $$name
 
 swagger:
-	swag init -g cmd/app/main.go
+	swag init -g main.go -d cmd/app,internal
 
 docker-up:
 	docker compose up --build
@@ -40,5 +40,3 @@ logs:
 clean:
 	rm -rf bin
 
-swagger:
-	swag init -g cmd/app/main.go
