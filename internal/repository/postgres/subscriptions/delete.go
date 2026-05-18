@@ -11,8 +11,7 @@ import (
 func (r *Repository) Delete(ctx context.Context, id uuid.UUID) error {
 	query := `
     UPDATE subscriptions
-    SET deleted_at = NOW(),
-        status = 'canceled'
+    SET deleted_at = NOW()
     WHERE id = $1
     AND deleted_at IS NULL
     `
