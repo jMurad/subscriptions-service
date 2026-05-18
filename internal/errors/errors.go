@@ -1,7 +1,5 @@
 package errors
 
-import "errors"
-
 type Error struct {
 	Code    string
 	Message string
@@ -14,6 +12,15 @@ func (e *Error) Error() string {
 
 func (e *Error) Unwrap() error {
 	return e.Err
+}
+
+func (e *Error) Is(target error) bool {
+	t, ok := target.(*Error)
+	if !ok {
+		return false
+	}
+
+	return e.Code == t.Code
 }
 
 func New(code, message string) *Error {
@@ -37,8 +44,4 @@ func WrapMessage(err error, target *Error, message string) error {
 		Message: message,
 		Err:     err,
 	}
-}
-
-func Is(err, target error) bool {
-	return errors.Is(err, target)
 }
