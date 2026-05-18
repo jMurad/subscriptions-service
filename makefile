@@ -6,6 +6,7 @@ APP_NAME=subscriptions-service
 SERVICE=./internal/service/subscriptions
 HANDLER=./internal/transport/http/handler/subscriptions
 MIDDLEWARE=./internal/middleware
+REPO=./internal/repository/postgres/subscriptions
 
 .PHONY: \
 	run \
@@ -20,6 +21,9 @@ MIDDLEWARE=./internal/middleware
 	docker-down \
 	logs \
 	test-service \
+	test-handler \
+	test-midlleware \
+	test-repo \
 	migrate-run \
 	migrate-stop \
 	clean
@@ -30,6 +34,12 @@ run:
 build:
 	go build -o bin/$(APP_NAME) ./cmd/app
 
+test:
+	test-service
+	test-handler
+	test-middleware
+	test-repo
+
 test-service:
 	go test -v $(SERVICE)
 
@@ -38,6 +48,9 @@ test-handler:
 
 test-midlleware:
 	go test -v $(MIDDLEWARE)
+
+test-repo:
+	go test -v $(REPO)
 
 migrate-up:
 	migrate -path migrations -database "$(DATABASE_URL)" up
