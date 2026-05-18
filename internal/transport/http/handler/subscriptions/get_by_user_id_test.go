@@ -19,7 +19,7 @@ import (
 )
 
 // Success
-func TestHandler_GetByUserID_Success(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_Success(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -82,7 +82,7 @@ func TestHandler_GetByUserID_Success(t *testing.T) {
 }
 
 // Invalid user_id
-func TestHandler_GetByUserID_InvalidUserID(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_InvalidUserID(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -127,7 +127,7 @@ func TestHandler_GetByUserID_InvalidUserID(t *testing.T) {
 }
 
 // Invalid limit
-func TestHandler_GetByUserID_InvalidLimit(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_InvalidLimit(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -174,7 +174,7 @@ func TestHandler_GetByUserID_InvalidLimit(t *testing.T) {
 }
 
 // Invalid offset
-func TestHandler_GetByUserID_InvalidOffset(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_InvalidOffset(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -221,7 +221,7 @@ func TestHandler_GetByUserID_InvalidOffset(t *testing.T) {
 }
 
 // Not found
-func TestHandler_GetByUserID_NotFound(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_NotFound(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -276,7 +276,7 @@ func TestHandler_GetByUserID_NotFound(t *testing.T) {
 }
 
 // Internal error
-func TestHandler_GetByUserID_InternalError(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_InternalError(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -331,7 +331,7 @@ func TestHandler_GetByUserID_InternalError(t *testing.T) {
 }
 
 // Conflict error
-func TestHandler_GetByUserID_ConflictError(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_ConflictError(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -386,7 +386,7 @@ func TestHandler_GetByUserID_ConflictError(t *testing.T) {
 }
 
 // Context canceled
-func TestHandler_GetByUserID_ContextCanceled(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_ContextCanceled(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(
@@ -447,7 +447,7 @@ func TestHandler_GetByUserID_ContextCanceled(t *testing.T) {
 }
 
 // Context deadline exceeded
-func TestHandler_GetByUserID_ContextDeadlineExceeded(t *testing.T) {
+func TestGetByUserIDHandlerSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(

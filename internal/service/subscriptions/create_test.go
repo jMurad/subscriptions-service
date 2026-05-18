@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestCreate_Success(t *testing.T) {
+func TestCreateServiceSubscriptions_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -44,7 +44,7 @@ func TestCreate_Success(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestCreate_EmptyServiceName(t *testing.T) {
+func TestCreateServiceSubscriptions_EmptyServiceName(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -78,7 +78,7 @@ func TestCreate_EmptyServiceName(t *testing.T) {
 	repo.AssertNotCalled(t, "Create")
 }
 
-func TestCreate_InvalidPrice(t *testing.T) {
+func TestCreateServiceSubscriptions_InvalidPrice(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -112,7 +112,7 @@ func TestCreate_InvalidPrice(t *testing.T) {
 	repo.AssertNotCalled(t, "Create")
 }
 
-func TestCreate_InvalidDateRange(t *testing.T) {
+func TestCreateServiceSubscriptions_InvalidDateRange(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -150,7 +150,7 @@ func TestCreate_InvalidDateRange(t *testing.T) {
 	repo.AssertNotCalled(t, "Create")
 }
 
-func TestCreate_TrimServiceName(t *testing.T) {
+func TestCreateServiceSubscriptions_TrimServiceName(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -184,7 +184,7 @@ func TestCreate_TrimServiceName(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestCreate_RepositoryError(t *testing.T) {
+func TestCreateServiceSubscriptions_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -217,7 +217,7 @@ func TestCreate_RepositoryError(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestCreate_ContextCanceled(t *testing.T) {
+func TestCreateServiceSubscriptions_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -265,7 +265,7 @@ func TestCreate_ContextCanceled(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestCreate_ContextDeadlineExceeded(t *testing.T) {
+func TestCreateServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)

@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetByID_Success(t *testing.T) {
+func TestGetByIDServiceSubscriptions_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -48,7 +48,7 @@ func TestGetByID_Success(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByID_NotFound(t *testing.T) {
+func TestGetByIDServiceSubscriptions_NotFound(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -87,7 +87,7 @@ func TestGetByID_NotFound(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByID_RepositoryError(t *testing.T) {
+func TestGetByIDServiceSubscriptions_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -115,7 +115,7 @@ func TestGetByID_RepositoryError(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByID_ContextCanceled(t *testing.T) {
+func TestGetByIDServiceSubscriptions_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -162,7 +162,7 @@ func TestGetByID_ContextCanceled(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByID_ContextDeadlineExceeded(t *testing.T) {
+func TestGetByIDServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)

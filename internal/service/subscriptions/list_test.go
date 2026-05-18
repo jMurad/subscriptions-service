@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestList_Success(t *testing.T) {
+func TestListServiceSubscriptions_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -49,7 +49,7 @@ func TestList_Success(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestList_DefaultLimit(t *testing.T) {
+func TestListServiceSubscriptions_DefaultLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -75,7 +75,7 @@ func TestList_DefaultLimit(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestList_MaxLimit(t *testing.T) {
+func TestListServiceSubscriptions_MaxLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -102,7 +102,7 @@ func TestList_MaxLimit(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestList_InvalidOffset(t *testing.T) {
+func TestListServiceSubscriptions_InvalidOffset(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -130,7 +130,7 @@ func TestList_InvalidOffset(t *testing.T) {
 	repo.AssertNotCalled(t, "List")
 }
 
-func TestList_RepositoryError(t *testing.T) {
+func TestListServiceSubscriptions_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -158,7 +158,7 @@ func TestList_RepositoryError(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestList_ContextCanceled(t *testing.T) {
+func TestListServiceSubscriptions_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -204,7 +204,7 @@ func TestList_ContextCanceled(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestList_ContextDeadlineExceeded(t *testing.T) {
+func TestListServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)

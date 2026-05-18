@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestDelete_Success(t *testing.T) {
+func TestDeleteServiceSubscriptions_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -36,7 +36,7 @@ func TestDelete_Success(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestDelete_NotFound(t *testing.T) {
+func TestDeleteServiceSubscriptions_NotFound(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -73,7 +73,7 @@ func TestDelete_NotFound(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestDelete_RepositoryError(t *testing.T) {
+func TestDeleteServiceSubscriptions_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -99,7 +99,7 @@ func TestDelete_RepositoryError(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestDelete_ContextCanceled(t *testing.T) {
+func TestDeleteServiceSubscriptions_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -142,7 +142,7 @@ func TestDelete_ContextCanceled(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestDelete_ContextDeadlineExceeded(t *testing.T) {
+func TestDeleteServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)

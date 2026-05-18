@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHandler_Total_SuccessWithoutFilters(t *testing.T) {
+func TestTotalHandlerSubscriptions_SuccessWithoutFilters(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -48,7 +48,7 @@ func TestHandler_Total_SuccessWithoutFilters(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Total_SuccessWithFilters(t *testing.T) {
+func TestTotalHandlerSubscriptions_SuccessWithFilters(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -93,7 +93,7 @@ func TestHandler_Total_SuccessWithFilters(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Total_InvalidUserID(t *testing.T) {
+func TestTotalHandlerSubscriptions_InvalidUserID(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -118,7 +118,7 @@ func TestHandler_Total_InvalidUserID(t *testing.T) {
 	service.AssertNotCalled(t, "Total")
 }
 
-func TestHandler_Total_InvalidFromDate(t *testing.T) {
+func TestTotalHandlerSubscriptions_InvalidFromDate(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -143,7 +143,7 @@ func TestHandler_Total_InvalidFromDate(t *testing.T) {
 	service.AssertNotCalled(t, "Total")
 }
 
-func TestHandler_Total_InvalidToDate(t *testing.T) {
+func TestTotalHandlerSubscriptions_InvalidToDate(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -168,7 +168,7 @@ func TestHandler_Total_InvalidToDate(t *testing.T) {
 	service.AssertNotCalled(t, "Total")
 }
 
-func TestHandler_Total_ValidationError(t *testing.T) {
+func TestTotalHandlerSubscriptions_ValidationError(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -209,7 +209,7 @@ func TestHandler_Total_ValidationError(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Total_InternalError(t *testing.T) {
+func TestTotalHandlerSubscriptions_InternalError(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -246,7 +246,7 @@ func TestHandler_Total_InternalError(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Total_Timeout(t *testing.T) {
+func TestTotalHandlerSubscriptions_Timeout(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -283,7 +283,7 @@ func TestHandler_Total_Timeout(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Total_Canceled(t *testing.T) {
+func TestTotalHandlerSubscriptions_Canceled(t *testing.T) {
 
 	service := new(mocks.Service)
 
@@ -320,7 +320,7 @@ func TestHandler_Total_Canceled(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Total_ConflictError(t *testing.T) {
+func TestTotalHandlerSubscriptions_ConflictError(t *testing.T) {
 
 	service := new(mocks.Service)
 

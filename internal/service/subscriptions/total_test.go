@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestTotal_SuccessWithoutFilters(t *testing.T) {
+func TestTotalServiceSubscriptions_SuccessWithoutFilters(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -43,7 +43,7 @@ func TestTotal_SuccessWithoutFilters(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestTotal_SuccessWithAllFilters(t *testing.T) {
+func TestTotalServiceSubscriptions_SuccessWithAllFilters(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -80,7 +80,7 @@ func TestTotal_SuccessWithAllFilters(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestTotal_InvalidDateRange(t *testing.T) {
+func TestTotalServiceSubscriptions_InvalidDateRange(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -113,7 +113,7 @@ func TestTotal_InvalidDateRange(t *testing.T) {
 	repo.AssertNotCalled(t, "Total")
 }
 
-func TestTotal_RepositoryError(t *testing.T) {
+func TestTotalServiceSubscriptions_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -145,7 +145,7 @@ func TestTotal_RepositoryError(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestTotal_ContextCanceled(t *testing.T) {
+func TestTotalServiceSubscriptions_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -195,7 +195,7 @@ func TestTotal_ContextCanceled(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestTotal_ContextDeadlineExceeded(t *testing.T) {
+func TestTotalServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)

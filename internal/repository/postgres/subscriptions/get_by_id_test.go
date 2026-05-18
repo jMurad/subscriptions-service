@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetByID_Success(t *testing.T) {
+func TestGetByIDRepositorySubscriptions_Success(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)
@@ -27,7 +27,7 @@ func TestGetByID_Success(t *testing.T) {
 	assert.Equal(t, sub.StartDate, got.StartDate)
 }
 
-func TestGetByID_NotFound(t *testing.T) {
+func TestGetByIDRepositorySubscriptions_NotFound(t *testing.T) {
 	setupTest(t)
 
 	got, err := repo.GetByID(context.Background(), uuid.New())
@@ -39,7 +39,7 @@ func TestGetByID_NotFound(t *testing.T) {
 	assert.True(t, errors.Is(err, apperrors.ErrNotFound))
 }
 
-func TestGetByID_DeletedSubscription(t *testing.T) {
+func TestGetByIDRepositorySubscriptions_DeletedSubscription(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)

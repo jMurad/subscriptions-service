@@ -21,7 +21,7 @@ import (
 )
 
 // Success test
-func TestHandler_Create_Success(t *testing.T) {
+func TestCreateHandlerSubscriptions_Success(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -69,7 +69,7 @@ func TestHandler_Create_Success(t *testing.T) {
 }
 
 // Invalid JSON
-func TestHandler_Create_InvalidJSON(t *testing.T) {
+func TestCreateHandlerSubscriptions_InvalidJSON(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -94,7 +94,7 @@ func TestHandler_Create_InvalidJSON(t *testing.T) {
 }
 
 // Invalid UUID
-func TestHandler_Create_InvalidUUID(t *testing.T) {
+func TestCreateHandlerSubscriptions_InvalidUUID(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -126,7 +126,7 @@ func TestHandler_Create_InvalidUUID(t *testing.T) {
 }
 
 // Invalid start_date
-func TestHandler_Create_InvalidStartDate(t *testing.T) {
+func TestCreateHandlerSubscriptions_InvalidStartDate(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -158,7 +158,7 @@ func TestHandler_Create_InvalidStartDate(t *testing.T) {
 }
 
 // Service error propagation
-func TestHandler_Create_ServiceError(t *testing.T) {
+func TestCreateHandlerSubscriptions_ServiceError(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -199,7 +199,7 @@ func TestHandler_Create_ServiceError(t *testing.T) {
 }
 
 // Canceled propagation
-func TestHandler_Create_ContextCanceled(t *testing.T) {
+func TestCreateHandlerSubscriptions_ContextCanceled(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -248,7 +248,7 @@ func TestHandler_Create_ContextCanceled(t *testing.T) {
 }
 
 // Timeout propagation
-func TestHandler_Create_ContextDeadlineExceeded(t *testing.T) {
+func TestCreateHandlerSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)

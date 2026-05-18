@@ -19,7 +19,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHandler_List_Success(t *testing.T) {
+func TestListHandlerSubscriptions_Success(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -72,7 +72,7 @@ func TestHandler_List_Success(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_List_DefaultPagination(t *testing.T) {
+func TestListHandlerSubscriptions_DefaultPagination(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -103,7 +103,7 @@ func TestHandler_List_DefaultPagination(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_List_InvalidLimit(t *testing.T) {
+func TestListHandlerSubscriptions_InvalidLimit(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -127,7 +127,7 @@ func TestHandler_List_InvalidLimit(t *testing.T) {
 	service.AssertNotCalled(t, "List")
 }
 
-func TestHandler_List_InvalidOffset(t *testing.T) {
+func TestListHandlerSubscriptions_InvalidOffset(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -151,7 +151,7 @@ func TestHandler_List_InvalidOffset(t *testing.T) {
 	service.AssertNotCalled(t, "List")
 }
 
-func TestHandler_List_NegativeOffset(t *testing.T) {
+func TestListHandlerSubscriptions_NegativeOffset(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -175,7 +175,7 @@ func TestHandler_List_NegativeOffset(t *testing.T) {
 	service.AssertNotCalled(t, "List")
 }
 
-func TestHandler_List_InternalError(t *testing.T) {
+func TestListHandlerSubscriptions_InternalError(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -209,7 +209,7 @@ func TestHandler_List_InternalError(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_List_ContextCanceled(t *testing.T) {
+func TestListHandlerSubscriptions_ContextCanceled(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -251,7 +251,7 @@ func TestHandler_List_ContextCanceled(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_List_ContextDeadlineExceeded(t *testing.T) {
+func TestListHandlerSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)

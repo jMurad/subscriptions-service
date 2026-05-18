@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestTotal_Success(t *testing.T) {
+func TestTotalRepositorySubscriptions_Success(t *testing.T) {
 	setupTest(t)
 
 	userID := uuid.New()
@@ -46,7 +46,7 @@ func TestTotal_Success(t *testing.T) {
 	assert.Equal(t, sub1.Price+sub2.Price, total)
 }
 
-func TestTotal_Empty(t *testing.T) {
+func TestTotalRepositorySubscriptions_Empty(t *testing.T) {
 	setupTest(t)
 
 	total, err := repo.Total(context.Background(), nil, nil, nil, nil)
@@ -56,7 +56,7 @@ func TestTotal_Empty(t *testing.T) {
 	assert.Equal(t, 0, total)
 }
 
-func TestTotal_FilterByService(t *testing.T) {
+func TestTotalRepositorySubscriptions_FilterByService(t *testing.T) {
 	setupTest(t)
 
 	seviceName := "Netflix"
@@ -101,7 +101,7 @@ func TestTotal_FilterByService(t *testing.T) {
 	assert.Equal(t, sub1.Price+sub3.Price, total)
 }
 
-func TestTotal_FilterByUser(t *testing.T) {
+func TestTotalRepositorySubscriptions_FilterByUser(t *testing.T) {
 	setupTest(t)
 
 	userID := uuid.New()
@@ -143,7 +143,7 @@ func TestTotal_FilterByUser(t *testing.T) {
 	assert.Equal(t, sub1.Price+sub3.Price, total)
 }
 
-func TestTotal_DeletedExcluded(t *testing.T) {
+func TestTotalRepositorySubscriptions_DeletedExcluded(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)

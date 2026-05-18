@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHandler_Delete_Success(t *testing.T) {
+func TestDeleteHandlerSubscriptions_Success(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -60,7 +60,7 @@ func TestHandler_Delete_Success(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Delete_InvalidID(t *testing.T) {
+func TestDeleteHandlerSubscriptions_InvalidID(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -96,7 +96,7 @@ func TestHandler_Delete_InvalidID(t *testing.T) {
 	service.AssertNotCalled(t, "Delete")
 }
 
-func TestHandler_Delete_NotFound(t *testing.T) {
+func TestDeleteHandlerSubscriptions_NotFound(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -142,7 +142,7 @@ func TestHandler_Delete_NotFound(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Delete_InternalError(t *testing.T) {
+func TestDeleteHandlerSubscriptions_InternalError(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -188,7 +188,7 @@ func TestHandler_Delete_InternalError(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Delete_ContextCanceled(t *testing.T) {
+func TestDeleteHandlerSubscriptions_ContextCanceled(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -242,7 +242,7 @@ func TestHandler_Delete_ContextCanceled(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_Delete_ContextDeadlineExceeded(t *testing.T) {
+func TestDeleteHandlerSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)

@@ -18,7 +18,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestHandler_GetByID_Success(t *testing.T) {
+func TestGetByIDHandlerSubscriptions_Success(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -71,7 +71,7 @@ func TestHandler_GetByID_Success(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_GetByID_InvalidUUID(t *testing.T) {
+func TestGetByIDHandlerSubscriptions_InvalidUUID(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -110,7 +110,7 @@ func TestHandler_GetByID_InvalidUUID(t *testing.T) {
 	service.AssertNotCalled(t, "GetByID")
 }
 
-func TestHandler_GetByID_NotFound(t *testing.T) {
+func TestGetByIDHandlerSubscriptions_NotFound(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -160,7 +160,7 @@ func TestHandler_GetByID_NotFound(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_GetByID_InternalError(t *testing.T) {
+func TestGetByIDHandlerSubscriptions_InternalError(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -210,7 +210,7 @@ func TestHandler_GetByID_InternalError(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_GetByID_ContextCanceled(t *testing.T) {
+func TestGetByIDHandlerSubscriptions_ContextCanceled(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)
@@ -266,7 +266,7 @@ func TestHandler_GetByID_ContextCanceled(t *testing.T) {
 	service.AssertExpectations(t)
 }
 
-func TestHandler_GetByID_ContextDeadlineExceeded(t *testing.T) {
+func TestGetByIDHandlerSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	service := new(mocks.Service)
 
 	handler := subscriptions.NewHandler(service)

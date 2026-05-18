@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetByUserID_Success(t *testing.T) {
+func TestGetByUserIDRepositorySubscriptions_Success(t *testing.T) {
 	setupTest(t)
 
 	userID := uuid.New()
@@ -47,7 +47,7 @@ func TestGetByUserID_Success(t *testing.T) {
 	assert.Equal(t, userID, result[1].UserID)
 }
 
-func TestGetByUserID_Empty(t *testing.T) {
+func TestGetByUserIDRepositorySubscriptions_Empty(t *testing.T) {
 	setupTest(t)
 
 	result, err := repo.GetByUserID(context.Background(), uuid.New(), 10, 0)
@@ -59,7 +59,7 @@ func TestGetByUserID_Empty(t *testing.T) {
 	assert.Equal(t, []model.Subscription{}, result)
 }
 
-func TestGetByUserID_DeletedSubscriptions(t *testing.T) {
+func TestGetByUserIDRepositorySubscriptions_DeletedSubscriptions(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)

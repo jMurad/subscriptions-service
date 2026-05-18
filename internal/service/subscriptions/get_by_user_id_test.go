@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestGetByUserID_Success(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_Success(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -53,7 +53,7 @@ func TestGetByUserID_Success(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByUserID_DefaultLimit(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_DefaultLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -83,7 +83,7 @@ func TestGetByUserID_DefaultLimit(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByUserID_MaxLimit(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_MaxLimit(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -113,7 +113,7 @@ func TestGetByUserID_MaxLimit(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByUserID_InvalidOffset(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_InvalidOffset(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -144,7 +144,7 @@ func TestGetByUserID_InvalidOffset(t *testing.T) {
 	repo.AssertNotCalled(t, "GetByUserID")
 }
 
-func TestGetByUserID_RepositoryError(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_RepositoryError(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -176,7 +176,7 @@ func TestGetByUserID_RepositoryError(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByUserID_ContextCanceled(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_ContextCanceled(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)
@@ -226,7 +226,7 @@ func TestGetByUserID_ContextCanceled(t *testing.T) {
 	repo.AssertExpectations(t)
 }
 
-func TestGetByUserID_ContextDeadlineExceeded(t *testing.T) {
+func TestGetByUserIDServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 	repo := new(mocks.Repository)
 
 	svc := subscriptions.NewService(repo)

@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestUpdate_Success(t *testing.T) {
+func TestUpdateRepositorySubscriptions_Success(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)
@@ -37,7 +37,7 @@ func TestUpdate_Success(t *testing.T) {
 	assert.Equal(t, newPrice, updated.Price)
 }
 
-func TestUpdate_NotFound(t *testing.T) {
+func TestUpdateRepositorySubscriptions_NotFound(t *testing.T) {
 	setupTest(t)
 
 	createTestSubscription(t, repo)
@@ -57,7 +57,7 @@ func TestUpdate_NotFound(t *testing.T) {
 	assert.True(t, errors.Is(err, apperrors.ErrNotFound))
 }
 
-func TestUpdate_Deleted(t *testing.T) {
+func TestUpdateRepositorySubscriptions_Deleted(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)
@@ -79,7 +79,7 @@ func TestUpdate_Deleted(t *testing.T) {
 	assert.True(t, errors.Is(err, apperrors.ErrNotFound))
 }
 
-func TestUpdate_InvalidDates(t *testing.T) {
+func TestUpdateRepositorySubscriptions_InvalidDates(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)

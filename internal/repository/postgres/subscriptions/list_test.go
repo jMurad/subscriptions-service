@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestList_Success(t *testing.T) {
+func TestListRepositorySubscriptions_Success(t *testing.T) {
 	setupTest(t)
 
 	createTestSubscription(t, repo)
@@ -24,7 +24,7 @@ func TestList_Success(t *testing.T) {
 	assert.Len(t, result, 2)
 }
 
-func TestList_Empty(t *testing.T) {
+func TestListRepositorySubscriptions_Empty(t *testing.T) {
 	setupTest(t)
 
 	result, err := repo.List(context.Background(), 10, 0)
@@ -36,7 +36,7 @@ func TestList_Empty(t *testing.T) {
 	assert.Equal(t, []model.Subscription{}, result)
 }
 
-func TestList_Pagination(t *testing.T) {
+func TestListRepositorySubscriptions_Pagination(t *testing.T) {
 	setupTest(t)
 
 	createTestSubscription(t, repo)

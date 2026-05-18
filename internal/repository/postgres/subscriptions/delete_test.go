@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDelete_Success(t *testing.T) {
+func TestDeleteRepositorySubscriptions_Success(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)
@@ -28,7 +28,7 @@ func TestDelete_Success(t *testing.T) {
 	assert.True(t, errors.Is(err, apperrors.ErrNotFound))
 }
 
-func TestDelete_NotFound(t *testing.T) {
+func TestDeleteRepositorySubscriptions_NotFound(t *testing.T) {
 	setupTest(t)
 
 	err := repo.Delete(context.Background(), uuid.New())
@@ -38,7 +38,7 @@ func TestDelete_NotFound(t *testing.T) {
 	assert.True(t, errors.Is(err, apperrors.ErrNotFound))
 }
 
-func TestDelete_AlreadyDeleted(t *testing.T) {
+func TestDeleteRepositorySubscriptions_AlreadyDeleted(t *testing.T) {
 	setupTest(t)
 
 	sub := createTestSubscription(t, repo)
