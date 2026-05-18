@@ -7,6 +7,14 @@ import (
 )
 
 func (r *Repository) List(ctx context.Context, limit, offset int) ([]model.Subscription, error) {
+	if limit < 0 {
+		return nil, apperrors.New(apperrors.ErrValidation.Code, "limit must not be negative")
+	}
+
+	if offset < 0 {
+		return nil, apperrors.New(apperrors.ErrValidation.Code, "offset must not be negative")
+	}
+
 	query := `
     SELECT
         id,
