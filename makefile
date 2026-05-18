@@ -1,9 +1,28 @@
+include .env
+export
+
 APP_NAME=subscriptions-service
 
-DB_URL=postgres://postgres:postgres@localhost:5432/subscriptions?sslmode=disable
+SERVICE=./internal/service/subscriptions
+HANDLER=./internal/transport/http/handler/subscriptions
+MIDDLEWARE=./internal/middleware
 
-.PHONY: run build test migrate-up migrate-down migrate-force \
-docker-up docker-down logs swagger clean
+.PHONY: \
+	run \
+	build \
+	test \
+	migrate-up \
+	migrate-down \
+	migrate-force \
+	migrate-create \
+	swagger \
+	docker-up \
+	docker-down \
+	logs \
+	test-service \
+	migrate-run \
+	migrate-stop \
+	clean
 
 run:
 	go run ./cmd/app
@@ -11,15 +30,24 @@ run:
 build:
 	go build -o bin/$(APP_NAME) ./cmd/app
 
+test-service:
+	go test -v $(SERVICE)
+
+test-handler:
+	go test -v $(HANDLER)
+
+test-midlleware:
+	go test -v $(MIDDLEWARE)
+
 migrate-up:
-	migrate -path migrations -database "$(DB_URL)" up
+	migrate -path migrations -database "$(DATABASE_URL)" up
 
 migrate-down:
-	migrate -path migrations -database "$(DB_URL)" down 1
+	migrate -path migrations -database "$(DATABASE_URL)" down 1
 
 migrate-force:
 	@read -p "Version: " version; \
-	migrate -path migrations -database "$(DB_URL)" force $$version
+	migrate -path migrations -database "$(DATABASE_URL)" force $$version
 
 migrate-create:
 	@read -p "Migration name: " name; \
@@ -33,6 +61,21 @@ docker-up:
 
 docker-down:
 	docker compose down
+
+postgres-up:
+	docker compose up -d postgres
+
+postgres-down:
+	docker compose stop postgres
+
+migrate-run:
+	docker compose up -d migrate
+
+migrate-stop:
+	docker compose stop migrate	
+
+docker-clean:
+	docker compose down --rmi all --volumes	
 
 logs:
 	docker compose logs -f
