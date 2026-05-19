@@ -8,7 +8,7 @@ Production-ready REST API сервис для управления пользо�
 <br>
 
 ![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge\&logo=go)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge\&logo=postgresql)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-316192?style=for-the-badge\&logo=postgresql)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge\&logo=docker)
 ![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge\&logo=swagger)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
