@@ -2,370 +2,227 @@
 
 <div align="center">
 
-REST API сервис для управления и агрегации пользовательских подписок.
+Production-ready REST API сервис для управления пользовательскими подписками
+с поддержкой агрегации стоимости, Swagger-документации, Docker и PostgreSQL.
 
-![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge&logo=go)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql)
-![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker)
-![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger)
+<br>
+
+![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge\&logo=go)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge\&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge\&logo=docker)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge\&logo=swagger)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 </div>
 
 ---
 
-## О проекте
+## ✨ Features
 
-Subscriptions Service — backend сервис на Go для хранения, управления и агрегации онлайн-подписок пользователей.
-
-Проект демонстрирует production-подход к разработке REST API:
-
-- Clean Architecture
-- Repository Pattern
-- Middleware pipeline
-- Structured logging
-- Graceful shutdown
-- PostgreSQL constraints
-- Unit & Integration tests
-- Swagger/OpenAPI
-- Dockerized environment
-
----
-
-# Возможности
-
-- CRUD операции для подписок
-- Подсчёт суммарной стоимости подписок
-- Фильтрация по пользователю и сервису
-- Soft delete
-- Pagination
-- PostgreSQL constraints
-- Централизованная обработка ошибок
-- Context propagation
-- Middleware chain
-- Swagger/OpenAPI документация
-- Unit и integration tests
-- Docker support
-- SQL migrations
+* CRUD операции для подписок
+* Агрегация общей стоимости подписок
+* Фильтрация и пагинация
+* Soft Delete
+* RESTful API
+* PostgreSQL + pgx
+* Docker / Docker Compose
+* Swagger/OpenAPI документация
+* Graceful Shutdown
+* Middleware logging/recovery
+* Unit и Integration тесты
+* Clean Architecture
 
 ---
 
-# Стек технологий
-
-| Технология | Назначение |
-|---|---|
-| Go 1.25 | Backend язык |
-| PostgreSQL | База данных |
-| Chi Router | HTTP router |
-| pgx | PostgreSQL driver |
-| Zap | Structured logging |
-| Swagger | API documentation |
-| Docker | Контейнеризация |
-| Testify | Тестирование |
-
----
-
-# Архитектура
+## 🏗 Architecture
 
 ```text
-HTTP Handler
-     ↓
- Service Layer
-     ↓
-Repository Layer
-     ↓
- PostgreSQL
-```
-
-## Handler Layer
-
-- HTTP handlers
-- DTO
-- validation
-- HTTP responses
-- status codes
-
-## Service Layer
-
-- бизнес-логика
-- orchestration
-- обработка ошибок
-- логика агрегации данных
-
-## Repository Layer
-
-- SQL queries
-- PostgreSQL access
-- transactions
-- data mapping
-
----
-
-# Структура проекта
-
-```text
-subscriptions-service/
+.
 ├── cmd/
-│   └── main.go
-│
-├── docs/                       # Swagger документация
+│   └── app/                 # Точка входа приложения
 │
 ├── internal/
-│   ├── app/                    # Инициализация приложения
-│   ├── config/                 # Конфигурация
-│   ├── contextkeys/            # Context keys
-│   ├── errors/                 # Кастомные ошибки
-│   ├── logger/                 # Logger setup
-│   ├── middleware/             # HTTP middleware
-│   ├── model/                  # Доменные модели
-│   ├── repository/             # Работа с базой данных и SQL
-│   │   └── postgres/
-│   ├── service/                # Бизнес-логика
-│   └── transport/http/         # HTTP handlers, DTO, responses и routing
-│       ├── dto/
-│       ├── handler/
-│       ├── query/
-│       └── response/
+│   ├── config/              # Конфигурация приложения
+│   ├── domain/              # Доменные модели и интерфейсы
+│   ├── service/             # Бизнес-логика
+│   ├── repository/          # Работа с PostgreSQL
+│   ├── transport/http/      # HTTP handlers, DTO, routes
+│   ├── middleware/          # Middleware
+│   └── app/                 # Инициализация приложения
 │
-├── migrations/
-├── Dockerfile
+├── migrations/              # SQL миграции
+├── docs/                    # Swagger документация
+├── tests/                   # Интеграционные тесты
 ├── docker-compose.yml
 ├── Makefile
-└── go.mod
+└── README.md
 ```
 
 ---
 
-# API Endpoints
+## 🚀 Quick Start
 
-| Метод | Endpoint | Описание |
-|---|---|---|
-| POST | `/subscriptions` | Создать подписку |
-| GET | `/subscriptions/{id}` | Получить подписку |
-| GET | `/subscriptions` | Получить список |
-| PUT | `/subscriptions/{id}` | Обновить подписку |
-| DELETE | `/subscriptions/{id}` | Удалить подписку |
-| GET | `/subscriptions/total` | Подсчитать общую стоимость |
-
----
-
-# Пример модели
-
-```json
-{
-  "id": "uuid",
-  "service_name": "Yandex Plus",
-  "price": 500,
-  "user_id": "uuid",
-  "start_date": "2025-01-01",
-  "end_date": "07-2025"
-}
-```
-
----
-
-# Database Schema
-
-```text
-subscriptions
-├── id
-├── user_id
-├── service_name
-├── price
-├── status
-├── start_date
-├── end_date
-├── created_at
-└── deleted_at
-```
-
----
-
-# PostgreSQL Constraints
-
-```sql
-CONSTRAINT chk_dates
-CHECK (
-    end_date IS NULL
-    OR end_date >= start_date
-)
-CONSTRAINT chk_service_name
-CHECK (
-    length(trim(service_name)) BETWEEN 1 AND 100
-)
-```
-
----
-
-# Запуск проекта
-
-## 1. Клонирование репозитория
+### 1. Clone repository
 
 ```bash
-git clone https://github.com/jMurad/subscriptions-service.git
-
+git clone https://github.com/your-username/subscriptions-service.git
 
 cd subscriptions-service
 ```
 
 ---
 
-## 2. Настройка `.env`
+### 2. Configure environment
+
+Создай `.env` файл:
 
 ```env
-APP_PORT=8080
-DATABASE_URL=postgres://postgres:postgres@postgres:5432/subscriptions?sslmode=disable
+HTTP_PORT=8080
+
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=subscriptions
+POSTGRES_SSLMODE=disable
 ```
 
 ---
 
-## 3. Запуск через Docker
+### 3. Run with Docker
 
 ```bash
 docker compose up --build
 ```
 
----
+Приложение будет доступно:
 
-## 4. Локальный запуск
-
-### Поднять PostgreSQL
-
-```bash
-docker compose up -d postgres
-```
-
-### Применить миграции
-
-```bash
-make migrate-up
-```
-
-### Запустить приложение
-
-```bash
-make run
-```
+* API → `http://localhost:8080`
+* Swagger → `http://localhost:8080/swagger/index.html`
 
 ---
 
-# Makefile команды
+## 📚 API Endpoints
 
-| Команда | Описание |
-|---|---|
-| `make run` | Запуск приложения |
-| `make build` | Сборка проекта |
-| `make test` | Запуск тестов |
-| `make migrate-up` | Применить миграции |
-| `make migrate-down` | Откатить миграции |
-| `make migrate-force` | Принудительная установка версии |
-| `make docker-up` | Запуск Docker |
-| `make docker-down` | Остановка Docker |
-| `make logs` | Просмотр логов |
-| `make swagger` | Генерация Swagger |
-| `make clean` | Очистка проекта |
+| Method | Endpoint               | Description       |
+| ------ | ---------------------- | ----------------- |
+| POST   | `/subscriptions`       | Создать подписку  |
+| GET    | `/subscriptions/{id}`  | Получить подписку |
+| PUT    | `/subscriptions/{id}`  | Обновить подписку |
+| DELETE | `/subscriptions/{id}`  | Удалить подписку  |
+| GET    | `/subscriptions`       | Список подписок   |
+| GET    | `/subscriptions/total` | Общая стоимость   |
 
 ---
 
-# Swagger
-
-Swagger UI:
-
-```text
-http://localhost:8080/swagger/index.html
-```
-
-Генерация документации:
-
-```bash
-make swagger
-```
-
----
-
-# Тестирование
-
-## Unit Tests
-
-```bash
-make test
-```
-
-Покрываются:
-
-- repository
-- service
-- handler
-- middleware
-
-## Integration Tests
-
-Интеграционные тесты используют:
-
-- PostgreSQL
-- migrations
-- реальный repository layer
-
----
-
-# Middleware
-
-## Recovery Middleware
-
-Перехватывает panic и предотвращает падение сервера.
-
-## Timeout Middleware
-
-Ограничивает время обработки запроса.
-
-## Request ID Middleware
-
-Добавляет уникальный request id.
-
-## Logger Middleware
-
-Логирует HTTP запросы и ответы.
-
----
-
-# Логирование
-
-Используется structured logging через `zap`.
-
-Пример:
+## 📦 Subscription Model
 
 ```json
 {
-  "level": "info",
-  "msg": "request completed",
-  "method": "GET",
-  "path": "/subscriptions",
-  "status": 200
+  "id": 1,
+  "user_id": 42,
+  "service_name": "Netflix",
+  "price": 999,
+  "start_date": "2025-01",
+  "end_date": "2025-12"
 }
 ```
 
 ---
 
-# Graceful Shutdown
+## 🧪 Running Tests
 
-Сервис корректно:
+### Unit Tests
 
-- завершает активные запросы
-- закрывает соединения
-- освобождает ресурсы
+```bash
+make test
+```
+
+### Integration Tests
+
+```bash
+make test-integration
+```
+
+### Coverage
+
+```bash
+make test-cover
+```
 
 ---
 
-# Пример cURL запроса
+## 🛠 Make Commands
 
-```bash
-curl -X POST http://localhost:8080/subscriptions \
--H "Content-Type: application/json" \
--d '{
-  "service_name": "Netflix",
-  "price": 999,
-  "user_id": "8a8e7c5b-5d8e-4d3a-a7ef-8b93d4f43a1c",
-  "start_date": "2025-01-01",
-  "status": "active"
-}'
+| Command             | Description        |
+| ------------------- | ------------------ |
+| `make run`          | Запуск приложения  |
+| `make build`        | Сборка проекта     |
+| `make test`         | Unit тесты         |
+| `make test-cover`   | Покрытие тестами   |
+| `make migrate-up`   | Применить миграции |
+| `make migrate-down` | Откатить миграции  |
+| `make swagger`      | Генерация Swagger  |
+| `make docker-up`    | Запуск Docker      |
+| `make docker-down`  | Остановка Docker   |
+
+---
+
+## 📖 Swagger
+
+После запуска приложения документация доступна:
+
+```text
+http://localhost:8080/swagger/index.html
 ```
+
+---
+
+## 🧱 Tech Stack
+
+* Go 1.25
+* PostgreSQL 16
+* pgx
+* chi router
+* Docker
+* Swagger / OpenAPI
+* Testify
+
+---
+
+## 🔒 Error Handling
+
+Проект использует централизованную обработку ошибок:
+
+* typed errors
+* errors.Is support
+* HTTP error mapping
+* validation errors
+* internal server protection
+
+---
+
+## 📈 Project Goals
+
+Проект создан для демонстрации:
+
+* backend архитектуры
+* работы с PostgreSQL
+* REST API разработки
+* Docker инфраструктуры
+* тестирования Go приложений
+* production-style подхода к разработке
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+<div align="center">
+
+Made with Go ❤️
+
+</div>
