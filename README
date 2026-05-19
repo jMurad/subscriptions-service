@@ -1,46 +1,71 @@
 # Subscriptions Service
 
-REST API сервис для агрегации и управления онлайн-подписками пользователей.
+<div align="center">
 
-Проект написан на Go с использованием PostgreSQL и построен с применением принципов Clean Architecture, middleware, structured logging и Swagger/OpenAPI.
+REST API сервис для управления и агрегации пользовательских подписок.
+
+![Go](https://img.shields.io/badge/Go-1.25-00ADD8?style=for-the-badge&logo=go)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker)
+![Swagger](https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?style=for-the-badge&logo=swagger)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+</div>
 
 ---
 
-## Возможности
+## О проекте
+
+Subscriptions Service — backend сервис на Go для хранения, управления и агрегации онлайн-подписок пользователей.
+
+Проект демонстрирует production-подход к разработке REST API:
+
+- Clean Architecture
+- Repository Pattern
+- Middleware pipeline
+- Structured logging
+- Graceful shutdown
+- PostgreSQL constraints
+- Unit & Integration tests
+- Swagger/OpenAPI
+- Dockerized environment
+
+---
+
+# Возможности
 
 - CRUD операции для подписок
-- Подсчёт общей стоимости подписок за период
+- Подсчёт суммарной стоимости подписок
 - Фильтрация по пользователю и сервису
-- PostgreSQL constraints и валидация данных
-- Graceful shutdown
-- Middleware chain
-- Structured logging (`zap`)
-- Swagger/OpenAPI документация
-- Unit и integration tests
-- Docker/Docker Compose
-- SQL migrations
+- Soft delete
+- Pagination
+- PostgreSQL constraints
 - Централизованная обработка ошибок
 - Context propagation
-- Error wrapping через `errors.Is`
+- Middleware chain
+- Swagger/OpenAPI документация
+- Unit и integration tests
+- Docker support
+- SQL migrations
 
 ---
 
-# Технологии
+# Стек технологий
 
-- Go 1.25
-- PostgreSQL
-- Chi Router
-- pgx
-- Zap Logger
-- Swagger (swaggo)
-- Docker & Docker Compose
-- Testify
+| Технология | Назначение |
+|---|---|
+| Go 1.25 | Backend язык |
+| PostgreSQL | База данных |
+| Chi Router | HTTP router |
+| pgx | PostgreSQL driver |
+| Zap | Structured logging |
+| Swagger | API documentation |
+| Docker | Контейнеризация |
+| Testify | Тестирование |
 
 ---
 
 # Архитектура
-
-Проект построен по принципам Layered / Clean Architecture.
 
 ```text
 HTTP Handler
@@ -54,21 +79,25 @@ Repository Layer
 
 ## Handler Layer
 
-Отвечает за:
-
-- обработку HTTP запросов
-- валидацию
+- HTTP handlers
 - DTO
-- преобразование ответов
-- HTTP status codes
+- validation
+- HTTP responses
+- status codes
 
 ## Service Layer
 
-Содержит бизнес-логику.
+- бизнес-логика
+- orchestration
+- обработка ошибок
+- логика агрегации данных
 
 ## Repository Layer
 
-Отвечает за работу с PostgreSQL.
+- SQL queries
+- PostgreSQL access
+- transactions
+- data mapping
 
 ---
 
@@ -77,8 +106,27 @@ Repository Layer
 ```text
 subscriptions-service/
 ├── cmd/
-├── docs/
+│   └── main.go
+│
+├── docs/                       # Swagger документация
+│
 ├── internal/
+│   ├── app/                    # Инициализация приложения
+│   ├── config/                 # Конфигурация
+│   ├── contextkeys/            # Context keys
+│   ├── errors/                 # Кастомные ошибки
+│   ├── logger/                 # Logger setup
+│   ├── middleware/             # HTTP middleware
+│   ├── model/                  # Доменные модели
+│   ├── repository/             # Работа с базой данных и SQL
+│   │   └── postgres/
+│   ├── service/                # Бизнес-логика
+│   └── transport/http/         # HTTP handlers, DTO, responses и routing
+│       ├── dto/
+│       ├── handler/
+│       ├── query/
+│       └── response/
+│
 ├── migrations/
 ├── Dockerfile
 ├── docker-compose.yml
@@ -88,37 +136,236 @@ subscriptions-service/
 
 ---
 
-# Запуск проекта
+# API Endpoints
 
-## Docker
+| Метод | Endpoint | Описание |
+|---|---|---|
+| POST | `/subscriptions` | Создать подписку |
+| GET | `/subscriptions/{id}` | Получить подписку |
+| GET | `/subscriptions` | Получить список |
+| PUT | `/subscriptions/{id}` | Обновить подписку |
+| DELETE | `/subscriptions/{id}` | Удалить подписку |
+| GET | `/subscriptions/total` | Подсчитать общую стоимость |
 
-```bash
-make docker-up
+---
+
+# Пример модели
+
+```json
+{
+  "id": "uuid",
+  "service_name": "Yandex Plus",
+  "price": 500,
+  "user_id": "uuid",
+  "start_date": "2025-01-01",
+  "end_date": "07-2025"
+}
 ```
 
-## Локальный запуск
+---
+
+# Database Schema
+
+```text
+subscriptions
+├── id
+├── user_id
+├── service_name
+├── price
+├── status
+├── start_date
+├── end_date
+├── created_at
+└── deleted_at
+```
+
+---
+
+# PostgreSQL Constraints
+
+```sql
+CONSTRAINT chk_dates
+CHECK (
+    end_date IS NULL
+    OR end_date >= start_date
+)
+CONSTRAINT chk_service_name
+CHECK (
+    length(trim(service_name)) BETWEEN 1 AND 100
+)
+```
+
+---
+
+# Запуск проекта
+
+## 1. Клонирование репозитория
+
+```bash
+git clone https://github.com/jMurad/subscriptions-service.git
+
+
+cd subscriptions-service
+```
+
+---
+
+## 2. Настройка `.env`
+
+```env
+APP_PORT=8080
+DATABASE_URL=postgres://postgres:postgres@postgres:5432/subscriptions?sslmode=disable
+```
+
+---
+
+## 3. Запуск через Docker
+
+```bash
+docker compose up --build
+```
+
+---
+
+## 4. Локальный запуск
+
+### Поднять PostgreSQL
+
+```bash
+docker compose up -d postgres
+```
+
+### Применить миграции
 
 ```bash
 make migrate-up
+```
+
+### Запустить приложение
+
+```bash
 make run
 ```
 
 ---
 
+# Makefile команды
+
+| Команда | Описание |
+|---|---|
+| `make run` | Запуск приложения |
+| `make build` | Сборка проекта |
+| `make test` | Запуск тестов |
+| `make migrate-up` | Применить миграции |
+| `make migrate-down` | Откатить миграции |
+| `make migrate-force` | Принудительная установка версии |
+| `make docker-up` | Запуск Docker |
+| `make docker-down` | Остановка Docker |
+| `make logs` | Просмотр логов |
+| `make swagger` | Генерация Swagger |
+| `make clean` | Очистка проекта |
+
+---
+
 # Swagger
+
+Swagger UI:
 
 ```text
 http://localhost:8080/swagger/index.html
+```
+
+Генерация документации:
+
+```bash
+make swagger
 ```
 
 ---
 
 # Тестирование
 
+## Unit Tests
+
 ```bash
 make test
 ```
 
+Покрываются:
+
+- repository
+- service
+- handler
+- middleware
+
+## Integration Tests
+
+Интеграционные тесты используют:
+
+- PostgreSQL
+- migrations
+- реальный repository layer
+
 ---
 
+# Middleware
 
+## Recovery Middleware
+
+Перехватывает panic и предотвращает падение сервера.
+
+## Timeout Middleware
+
+Ограничивает время обработки запроса.
+
+## Request ID Middleware
+
+Добавляет уникальный request id.
+
+## Logger Middleware
+
+Логирует HTTP запросы и ответы.
+
+---
+
+# Логирование
+
+Используется structured logging через `zap`.
+
+Пример:
+
+```json
+{
+  "level": "info",
+  "msg": "request completed",
+  "method": "GET",
+  "path": "/subscriptions",
+  "status": 200
+}
+```
+
+---
+
+# Graceful Shutdown
+
+Сервис корректно:
+
+- завершает активные запросы
+- закрывает соединения
+- освобождает ресурсы
+
+---
+
+# Пример cURL запроса
+
+```bash
+curl -X POST http://localhost:8080/subscriptions \
+-H "Content-Type: application/json" \
+-d '{
+  "service_name": "Netflix",
+  "price": 999,
+  "user_id": "8a8e7c5b-5d8e-4d3a-a7ef-8b93d4f43a1c",
+  "start_date": "2025-01-01",
+  "status": "active"
+}'
+```
