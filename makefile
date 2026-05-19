@@ -12,6 +12,10 @@ REPO=./internal/repository/postgres/subscriptions
 	run \
 	build \
 	test \
+	test-service \
+	test-handler \
+	test-middleware \
+	test-repo \
 	migrate-up \
 	migrate-down \
 	migrate-force \
@@ -19,13 +23,11 @@ REPO=./internal/repository/postgres/subscriptions
 	swagger \
 	docker-up \
 	docker-down \
-	logs \
-	test-service \
-	test-handler \
-	test-midlleware \
-	test-repo \
 	migrate-run \
 	migrate-stop \
+	postgres-up \
+	postgres-down \
+	logs \
 	clean
 
 run:
@@ -35,10 +37,10 @@ build:
 	go build -o bin/$(APP_NAME) ./cmd/app
 
 test:
-	test-service
-	test-handler
-	test-middleware
-	test-repo
+	make test-service
+	make test-handler
+	make test-middleware
+	make test-repo
 
 test-service:
 	go test -v $(SERVICE)
@@ -46,7 +48,7 @@ test-service:
 test-handler:
 	go test -v $(HANDLER)
 
-test-midlleware:
+test-middleware:
 	go test -v $(MIDDLEWARE)
 
 test-repo:
