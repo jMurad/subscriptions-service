@@ -43,7 +43,7 @@ Production-ready REST API сервис для управления пользо�
 │
 ├── internal/
 │   ├── config/              # Конфигурация приложения
-│   ├── model/              # Доменные модели и интерфейсы
+│   ├── model/               # Доменные модели и интерфейсы
 │   ├── service/             # Бизнес-логика
 │   ├── repository/          # Работа с PostgreSQL
 │   ├── transport/http/      # HTTP handlers, DTO, routes
