@@ -43,7 +43,7 @@ Production-ready REST API сервис для управления пользо�
 │
 ├── internal/
 │   ├── config/              # Конфигурация приложения
-│   ├── domain/              # Доменные модели и интерфейсы
+│   ├── model/              # Доменные модели и интерфейсы
 │   ├── service/             # Бизнес-логика
 │   ├── repository/          # Работа с PostgreSQL
 │   ├── transport/http/      # HTTP handlers, DTO, routes
@@ -52,7 +52,6 @@ Production-ready REST API сервис для управления пользо�
 │
 ├── migrations/              # SQL миграции
 ├── docs/                    # Swagger документация
-├── tests/                   # Интеграционные тесты
 ├── docker-compose.yml
 ├── Makefile
 └── README.md
@@ -65,7 +64,7 @@ Production-ready REST API сервис для управления пользо�
 ### 1. Clone repository
 
 ```bash
-git clone https://github.com/your-username/subscriptions-service.git
+git clone https://github.com/jMurad/subscriptions-service.git
 
 cd subscriptions-service
 ```
@@ -77,14 +76,8 @@ cd subscriptions-service
 Создай `.env` файл:
 
 ```env
-HTTP_PORT=8080
-
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=subscriptions
-POSTGRES_SSLMODE=disable
+APP_PORT=8080
+DATABASE_URL=postgres://postgres:postgres@postgres:5432/subscriptions?sslmode=disable
 ```
 
 ---
@@ -104,14 +97,15 @@ docker compose up --build
 
 ## 📚 API Endpoints
 
-| Method | Endpoint               | Description       |
-| ------ | ---------------------- | ----------------- |
-| POST   | `/subscriptions`       | Создать подписку  |
-| GET    | `/subscriptions/{id}`  | Получить подписку |
-| PUT    | `/subscriptions/{id}`  | Обновить подписку |
-| DELETE | `/subscriptions/{id}`  | Удалить подписку  |
-| GET    | `/subscriptions`       | Список подписок   |
-| GET    | `/subscriptions/total` | Общая стоимость   |
+| Method | Endpoint                         | Description                 |
+| ------ | -------------------------------- | --------------------------- |
+| POST   | `/subscriptions`                 | Создать подписку            |
+| GET    | `/subscriptions/{id}`            | Получить подписку           |
+| GET    | `/subscriptions/user/{user_id}`  | Получить подписку по userID |
+| PUT    | `/subscriptions/{id}`            | Обновить подписку           |
+| DELETE | `/subscriptions/{id}`            | Удалить подписку            |
+| GET    | `/subscriptions`                 | Список подписок             |
+| GET    | `/subscriptions/total`           | Общая стоимость             |
 
 ---
 
@@ -123,8 +117,9 @@ docker compose up --build
   "user_id": 42,
   "service_name": "Netflix",
   "price": 999,
-  "start_date": "2025-01",
-  "end_date": "2025-12"
+  "start_date": "11-2025",
+  "end_date": "12-2025",
+  "created_at": "01-2025",
 }
 ```
 
@@ -135,19 +130,15 @@ docker compose up --build
 ### Unit Tests
 
 ```bash
-make test
+make test-service
+make test-handler
+make test-middleware
 ```
 
 ### Integration Tests
 
 ```bash
-make test-integration
-```
-
-### Coverage
-
-```bash
-make test-cover
+make test-repo
 ```
 
 ---
@@ -158,8 +149,7 @@ make test-cover
 | ------------------- | ------------------ |
 | `make run`          | Запуск приложения  |
 | `make build`        | Сборка проекта     |
-| `make test`         | Unit тесты         |
-| `make test-cover`   | Покрытие тестами   |
+| `make test`         | Тесты              |
 | `make migrate-up`   | Применить миграции |
 | `make migrate-down` | Откатить миграции  |
 | `make swagger`      | Генерация Swagger  |
@@ -181,7 +171,7 @@ http://localhost:8080/swagger/index.html
 ## 🧱 Tech Stack
 
 * Go 1.25
-* PostgreSQL 16
+* PostgreSQL 17
 * pgx
 * chi router
 * Docker
