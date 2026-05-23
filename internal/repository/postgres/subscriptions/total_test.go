@@ -39,7 +39,11 @@ func TestTotalRepositorySubscriptions_Success(t *testing.T) {
 
 	require.NoError(t, err)
 
-	total, err := repo.Total(context.Background(), &userID, nil, nil, nil)
+	effectiveFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	effectiveTo := time.Now()
+
+	total, err := repo.Total(context.Background(), &userID, nil, effectiveFrom, effectiveTo)
 
 	require.NoError(t, err)
 
@@ -49,7 +53,11 @@ func TestTotalRepositorySubscriptions_Success(t *testing.T) {
 func TestTotalRepositorySubscriptions_Empty(t *testing.T) {
 	setupTest(t)
 
-	total, err := repo.Total(context.Background(), nil, nil, nil, nil)
+	effectiveFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	effectiveTo := time.Now()
+
+	total, err := repo.Total(context.Background(), nil, nil, effectiveFrom, effectiveTo)
 
 	require.NoError(t, err)
 
@@ -94,7 +102,11 @@ func TestTotalRepositorySubscriptions_FilterByService(t *testing.T) {
 
 	require.NoError(t, err)
 
-	total, err := repo.Total(context.Background(), nil, &seviceName, nil, nil)
+	effectiveFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	effectiveTo := time.Now()
+
+	total, err := repo.Total(context.Background(), nil, &seviceName, effectiveFrom, effectiveTo)
 
 	require.NoError(t, err)
 
@@ -136,25 +148,74 @@ func TestTotalRepositorySubscriptions_FilterByUser(t *testing.T) {
 	_, err = repo.Create(context.Background(), sub3)
 	require.NoError(t, err)
 
-	total, err := repo.Total(context.Background(), &userID, nil, nil, nil)
+	effectiveFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	effectiveTo := time.Now()
+
+	total, err := repo.Total(context.Background(), &userID, nil, effectiveFrom, effectiveTo)
 
 	require.NoError(t, err)
 
 	assert.Equal(t, sub1.Price+sub3.Price, total)
 }
 
+func TestTotalRepositorySubscriptions_OverlapPeriod(t *testing.T) {
+	setupTest(t)
+
+	userID := uuid.New()
+
+	startDate := time.Date(2025, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	endDate := time.Date(2025, time.December, 1, 0, 0, 0, 0, time.UTC)
+
+	sub := model.Subscription{
+		ServiceName: "Netflix",
+		Price:       100,
+		UserID:      userID,
+		StartDate:   startDate,
+		EndDate:     &endDate,
+	}
+
+	_, err := repo.Create(context.Background(), sub)
+
+	require.NoError(t, err)
+
+	effectiveFrom := time.Date(2025, time.March, 1, 0, 0, 0, 0, time.UTC)
+
+	effectiveTo := time.Date(2025, time.April, 1, 0, 0, 0, 0, time.UTC)
+
+	total, err := repo.Total(context.Background(), &userID, nil, effectiveFrom, effectiveTo)
+
+	require.NoError(t, err)
+
+	assert.Equal(t, 2*sub.Price, total)
+}
+
 func TestTotalRepositorySubscriptions_DeletedExcluded(t *testing.T) {
 	setupTest(t)
 
+	var (
+		total_before, total_after int
+		err                       error
+	)
+
+	effectiveFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	effectiveTo := time.Now()
+
 	sub := createTestSubscription(t, repo)
 
-	err := repo.Delete(context.Background(), sub.ID)
+	total_before, err = repo.Total(context.Background(), nil, nil, effectiveFrom, effectiveTo)
 
 	require.NoError(t, err)
 
-	total, err := repo.Total(context.Background(), nil, nil, nil, nil)
+	err = repo.Delete(context.Background(), sub.ID)
 
 	require.NoError(t, err)
 
-	assert.Equal(t, 0, total)
+	total_after, err = repo.Total(context.Background(), nil, nil, effectiveFrom, effectiveTo)
+
+	require.NoError(t, err)
+
+	assert.Equal(t, total_before, total_after)
 }
