@@ -1,0 +1,375 @@
+basePath: /
+definitions:
+  response.ErrorBody:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  response.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/response.ErrorBody'
+    type: object
+  subscriptions.CreateRequest:
+    properties:
+      end_date:
+        description: |-
+          Subscription end date
+
+          example: 2025-12-31
+        type: string
+      price:
+        description: |-
+          Subscription monthly price
+
+          required: true
+          example: 999
+        type: integer
+      service_name:
+        description: |-
+          Subscription service name
+
+          required: true
+          example: Netflix
+        type: string
+      start_date:
+        description: |-
+          Subscription start date
+
+          required: true
+          example: 2025-01-01
+        type: string
+      user_id:
+        description: |-
+          User UUID
+
+          required: true
+          example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+    type: object
+  subscriptions.CreateResponse:
+    properties:
+      id:
+        description: |-
+          Created subscription ID
+
+          example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+    type: object
+  subscriptions.SubscriptionResponse:
+    properties:
+      end_date:
+        description: |-
+          Subscription end date
+          example: 2025-12-31
+        type: string
+      id:
+        description: |-
+          Subscription ID
+          example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      price:
+        description: |-
+          Subscription price in cents
+          example: 999
+        type: integer
+      service_name:
+        description: |-
+          Subscription service name
+          example: Netflix
+        type: string
+      start_date:
+        description: |-
+          Subscription start date
+          example: 2025-01-01
+        type: string
+      user_id:
+        description: |-
+          User ID
+          example: 550e8400-e29b-41d4-a716-446655440111
+        type: string
+    type: object
+  subscriptions.TotalResponse:
+    properties:
+      total:
+        description: Total subscriptions cost.
+        type: integer
+    type: object
+  subscriptions.UpdateRequest:
+    properties:
+      end_date:
+        description: |-
+          Subscription end date
+
+          example: 2025-12-31
+        type: string
+      price:
+        description: |-
+          Subscription monthly price
+
+          example: 999
+        type: integer
+      service_name:
+        description: |-
+          Subscription service name
+
+          example: Netflix
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: REST API for managing subscriptions
+  title: Subscriptions API
+  version: "1.0"
+paths:
+  /subscriptions:
+    get:
+      description: Returns paginated list of subscriptions
+      parameters:
+      - description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/subscriptions.SubscriptionResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: List subscriptions
+      tags:
+      - subscriptions
+    post:
+      consumes:
+      - application/json
+      description: Create a new user subscription
+      parameters:
+      - description: Subscription payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/subscriptions.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/subscriptions.CreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create subscription
+      tags:
+      - subscriptions
+  /subscriptions/{id}:
+    delete:
+      description: Soft delete subscription by ID
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Delete subscription
+      tags:
+      - subscriptions
+    get:
+      description: Returns subscription details by subscription ID
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/subscriptions.SubscriptionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get subscription by ID
+      tags:
+      - subscriptions
+    patch:
+      consumes:
+      - application/json
+      description: Partially update subscription fields
+      parameters:
+      - description: Subscription ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/subscriptions.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "408":
+          description: Request Timeout
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update subscription
+      tags:
+      - subscriptions
+  /subscriptions/total:
+    get:
+      description: Returns total subscriptions cost with optional filters
+      parameters:
+      - description: User ID
+        in: query
+        name: user_id
+        type: string
+      - description: Service name
+        in: query
+        name: service_name
+        type: string
+      - description: Start date (YYYY-MM-DD)
+        in: query
+        name: from
+        type: string
+      - description: End date (YYYY-MM-DD)
+        in: query
+        name: to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/subscriptions.TotalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Calculate subscriptions total cost
+      tags:
+      - subscriptions
+  /subscriptions/user/{user_id}:
+    get:
+      description: Returns paginated list of user subscriptions
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - description: Pagination limit
+        in: query
+        name: limit
+        type: integer
+      - description: Pagination offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/subscriptions.SubscriptionResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get subscriptions by user ID
+      tags:
+      - subscriptions
+swagger: "2.0"
