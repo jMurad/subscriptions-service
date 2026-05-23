@@ -24,7 +24,7 @@ Thumbs.db
 *.log
 
 # Swagger generated docs
-docs/
+# docs/
 
 # Docker overrides
 docker-compose.override.yml
