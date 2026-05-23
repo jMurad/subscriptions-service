@@ -16,7 +16,18 @@ func (s *service) Total(ctx context.Context, userID *uuid.UUID, serviceName *str
 
 	log := logger.FromContext(ctx)
 
-	if from != nil && to != nil && from.After(*to) {
+	effectiveFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
+	effectiveTo := time.Now()
+
+	if from != nil {
+		effectiveFrom = *from
+	}
+
+	if to != nil {
+		effectiveTo = *to
+	}
+
+	if effectiveFrom.After(effectiveTo) {
 		err := apperrors.WrapMessage(
 			nil,
 			apperrors.ErrValidation,
@@ -35,8 +46,8 @@ func (s *service) Total(ctx context.Context, userID *uuid.UUID, serviceName *str
 		ctx,
 		userID,
 		serviceName,
-		from,
-		to,
+		effectiveFrom,
+		effectiveTo,
 	)
 	if err != nil {
 		fields := []zap.Field{zap.Error(err)}
