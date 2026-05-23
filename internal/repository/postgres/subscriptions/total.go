@@ -10,24 +10,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *Repository) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from *time.Time, to *time.Time) (int, error) {
+func (r *Repository) Total(ctx context.Context, userID *uuid.UUID, serviceName *string, from time.Time, to time.Time) (int, error) {
 	conditions := make([]string, 0)
-	args := make([]any, 0)
+	args := []any{from, to}
 
-	argPos := 1
+	argPos := 3
 
-	if from != nil {
-		conditions = append(conditions, "start_date >= $"+strconv.Itoa(argPos))
-		args = append(args, *from)
-
-		argPos++
-	}
-	if to != nil {
-		conditions = append(conditions, "start_date <= $"+strconv.Itoa(argPos))
-		args = append(args, *to)
-
-		argPos++
-	}
 	if userID != nil {
 		conditions = append(conditions, "user_id = $"+strconv.Itoa(argPos))
 		args = append(args, *userID)
@@ -42,9 +30,40 @@ func (r *Repository) Total(ctx context.Context, userID *uuid.UUID, serviceName *
 	}
 
 	query := `
-    SELECT COALESCE(SUM(price), 0)
-    FROM subscriptions
-    WHERE deleted_at IS NULL
+    SELECT COALESCE(SUM(
+		price * (
+			(
+				DATE_PART(
+					'year',
+					AGE(
+						LEAST(
+							COALESCE(end_date, $2),
+							$2
+						),
+						GREATEST(start_date, $1)
+					)
+				) * 12
+			)
+			+
+			DATE_PART(
+				'month',
+				AGE(
+					LEAST(
+						COALESCE(end_date, $2),
+						$2
+					),
+					GREATEST(start_date, $1)
+				)
+			)
+			+ 1
+		)
+	), 0)
+	FROM subscriptions
+	WHERE start_date <= $2
+	AND (
+		end_date IS NULL
+		OR end_date >= $1
+	)
     `
 
 	if len(conditions) > 0 {
