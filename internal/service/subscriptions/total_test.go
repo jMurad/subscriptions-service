@@ -19,13 +19,14 @@ func TestTotalServiceSubscriptions_SuccessWithoutFilters(t *testing.T) {
 	svc := subscriptions.NewService(repo)
 
 	expectedTotal := 999
+	expectedFrom := time.Date(1970, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	repo.On("Total",
 		mock.Anything,
 		(*uuid.UUID)(nil),
 		(*string)(nil),
-		(*time.Time)(nil),
-		(*time.Time)(nil),
+		expectedFrom,
+		mock.AnythingOfType("time.Time"),
 	).Return(expectedTotal, nil)
 
 	total, err := svc.Total(
@@ -61,8 +62,8 @@ func TestTotalServiceSubscriptions_SuccessWithAllFilters(t *testing.T) {
 		mock.Anything,
 		&userID,
 		&serviceName,
-		&from,
-		&to,
+		from,
+		to,
 	).Return(expectedTotal, nil)
 
 	total, err := svc.Total(
@@ -124,8 +125,8 @@ func TestTotalServiceSubscriptions_RepositoryError(t *testing.T) {
 		mock.Anything,
 		(*uuid.UUID)(nil),
 		(*string)(nil),
-		(*time.Time)(nil),
-		(*time.Time)(nil),
+		mock.AnythingOfType("time.Time"),
+		mock.AnythingOfType("time.Time"),
 	).Return(0, expectedErr)
 
 	total, err := svc.Total(
@@ -160,8 +161,8 @@ func TestTotalServiceSubscriptions_ContextCanceled(t *testing.T) {
 		mock.Anything,
 		(*uuid.UUID)(nil),
 		(*string)(nil),
-		(*time.Time)(nil),
-		(*time.Time)(nil),
+		mock.AnythingOfType("time.Time"),
+		mock.AnythingOfType("time.Time"),
 	).Run(func(args mock.Arguments) {
 		ctx := args.Get(0).(context.Context)
 		<-ctx.Done()
@@ -204,8 +205,8 @@ func TestTotalServiceSubscriptions_ContextDeadlineExceeded(t *testing.T) {
 		mock.Anything,
 		(*uuid.UUID)(nil),
 		(*string)(nil),
-		(*time.Time)(nil),
-		(*time.Time)(nil),
+		mock.AnythingOfType("time.Time"),
+		mock.AnythingOfType("time.Time"),
 	).Run(func(args mock.Arguments) {
 		ctx := args.Get(0).(context.Context)
 		<-ctx.Done()
